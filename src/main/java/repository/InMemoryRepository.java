@@ -1,4 +1,4 @@
 package repository;
 
-public class InMemoryRepository implements Repository{
+public class InMemoryRepository implements BudgetPlannerRepository {
 }

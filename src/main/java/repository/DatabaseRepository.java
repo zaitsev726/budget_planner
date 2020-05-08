@@ -1,4 +1,4 @@
 package repository;
 
-public class DatabaseRepository implements Repository{
+public class DatabaseRepository implements BudgetPlannerRepository {
 }
