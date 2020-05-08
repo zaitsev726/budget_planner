@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class CategoryController {
     private HashMap<String, Category> categories;
     public CategoryController(){
+        categories = new HashMap<>();
         initializationDefaultCategory();
     }
 
@@ -20,5 +21,7 @@ public class CategoryController {
         categories.put("Подарки", new Category("Подарки"));
     }
 
-
+    public HashMap<String, Category> getCategories() {
+        return categories;
+    }
 }

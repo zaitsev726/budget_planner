@@ -31,9 +31,21 @@ public class Category {
         incomeHistory.put(newIncome, date);
     }
 
+    public void addNewIncome(int income, Date date){
+        currentSum += income;
+        String newIncome = "Доход: +"+income+" " + date;
+        incomeHistory.put(newIncome, date);
+    }
+
     public void addNewExpense(int expense){
         currentSum -= expense;
         Date date = new Date();
+        String newExpense = "Расход: -"+expense+" " + date;
+        expenseHistory.put(newExpense, date);
+    }
+
+    public void addNewExpense(int expense, Date date){
+        currentSum -= expense;
         String newExpense = "Расход: -"+expense+" " + date;
         expenseHistory.put(newExpense, date);
     }
