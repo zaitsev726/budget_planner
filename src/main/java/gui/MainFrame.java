@@ -1,7 +1,5 @@
 package gui;
 
-import controller.Controller;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,10 +15,10 @@ public class MainFrame extends JFrame {
     private PieChart pieChart1;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
-    private Controller controller;
+    //private Controller controller;
 
-    public MainFrame(Controller c) {
-        controller = c;
+    public MainFrame(/*Controller c*/) {
+        //controller = c;
         setTitle("Delete statement");
         setLocation(
                 (SCREEN_WIDTH - totalPanel.getPreferredSize().width) / 2,
@@ -37,7 +35,7 @@ public class MainFrame extends JFrame {
         ArrayList values = new ArrayList<>();
         ArrayList colorList = getColorList(size);
         for (int i = 0; i < size; ++i)
-            values.add((double) 100 / (size-1));
+            values.add((double) 100 / (size - 1));
         pieChart1 = new PieChart(values, colorList);
         pieChart1.setPreferredSize(new Dimension(150, 150));
 
