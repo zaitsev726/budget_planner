@@ -2,7 +2,6 @@ package repository;
 
 import categories.Category;
 import repository.CategoryRepository;
-import sun.awt.geom.AreaOp;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -11,7 +10,7 @@ import javax.persistence.Persistence;
 
 public class CategoryRepository{
     EntityManagerFactory emf;
-    public CategoryRepositoryImpl(){
+    public CategoryRepository(){
         emf = Persistence.createEntityManagerFactory("model");
     }
 

@@ -1,3 +1,5 @@
+package entityTest;
+
 import categories.Category;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,13 +14,13 @@ public class CategoryTest {
 
     @Before
     public void setCategory(){
-        category = new Category("РандомИмя");
+        category = new Category("RandomName");
     }
 
 
     @Test
     public void testDefaultValues(){
-        assertEquals(category.getCategoryName(), "РандомИмя");
+        assertEquals(category.getCategoryName(), "RandomName");
         assertEquals(category.getCurrentSum(), 0);
         assertEquals(category.getExpenseHistory().size(), 0);
         assertEquals(category.getIncomeHistory().size(), 0);
