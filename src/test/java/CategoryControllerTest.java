@@ -5,19 +5,18 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CategoryControllerTest {
     public CategoryController controller;
 
     @Before
-    public void setController (){
+    public void setController() {
         controller = new CategoryController();
     }
 
     @Test
-    public void testContainsDefaultValues(){
+    public void testContainsDefaultValues() {
         HashMap<String, Category> categories = controller.getCategories();
 
         assertTrue(categories.containsKey("Транспорт"));

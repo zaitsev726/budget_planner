@@ -1,5 +1,7 @@
 package gui;
 
+import controller.GuiController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ public class MainFrame extends JFrame {
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     //private Controller controller;
 
-    public MainFrame(/*Controller c*/) {
+    public MainFrame(/*Controller c*/GuiController guiController) {
         //controller = c;
         setTitle("Delete statement");
         setLocation(
