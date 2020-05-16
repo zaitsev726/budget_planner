@@ -9,20 +9,22 @@ import java.util.ArrayList;
 public class MainFrame extends JFrame {
     private JPanel totalPanel;
     private PieChart pieChart1;
+    private JButton рButton;
+    private JButton button2;
+    private JTextField textField1;
     private JButton button1;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     //private Controller controller;
 
-    public MainFrame(/*Controller c*/GuiController guiController) {
-        //controller = c;
-        setTitle("Delete statement");
+    public MainFrame(GuiController guiController) {
+        setTitle("Budget planner");
         setLocation(
                 (SCREEN_WIDTH - totalPanel.getPreferredSize().width) / 2,
                 (SCREEN_HEIGHT - totalPanel.getPreferredSize().height) / 2
         );
         setContentPane(totalPanel);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
         setVisible(true);
     }
@@ -80,4 +82,5 @@ public class MainFrame extends JFrame {
         }
         return colorList;
     }
+
 }
