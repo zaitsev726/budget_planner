@@ -22,4 +22,20 @@ public class Income {
     private Date date;
 
     public Income(){}
+
+    public Long getIdIncome() { return idIncome; }
+
+    public void setIdIncome(Long idIncome) { this.idIncome = idIncome; }
+
+    public Long getIdCategory() { return idCategory; }
+
+    public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
+
+    public int getSum() { return sum; }
+
+    public void setSum(int sum) { this.sum = sum; }
+
+    public Date getDate() { return date; }
+
+    public void setDate(Date date) { this.date = date; }
 }

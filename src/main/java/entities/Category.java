@@ -15,4 +15,16 @@ public class Category {
     private String categoryName;
 
     public Category(){}
+
+    public Long getIdCategory() { return idCategory; }
+
+    public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
+
+    public int getCurrentSum() { return currentSum; }
+
+    public void setCurrentSum(int currentSum) { this.currentSum = currentSum; }
+
+    public String getCategoryName() { return categoryName; }
+
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 }
