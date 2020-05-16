@@ -8,13 +8,8 @@ import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
     private JPanel totalPanel;
-    private JPanel categoryListPanel;
-    private JPanel turnoverListPanel;
-    private JLabel label1;
-    private JPanel pieChartPanel;
-    private JButton button1;
-    private JButton button2;
     private PieChart pieChart1;
+    private JButton button1;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     //private Controller controller;
