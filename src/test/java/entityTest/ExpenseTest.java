@@ -13,7 +13,7 @@ public class ExpenseTest {
     private Date date;
 
     @Before
-    private void setExpense(){
+    public void setExpense(){
         expense = new Expense();
         expense.setIdCategory((long) 2);
         expense.setIdExpense((long) 3);
@@ -23,7 +23,7 @@ public class ExpenseTest {
     }
 
     @Test
-    private void testParameters(){
+    public void testExpenseParameters(){
         assertEquals((long) expense.getIdCategory(), 2);
         assertEquals((long) expense.getIdExpense(), 3);
         assertEquals(expense.getSum(), 400);

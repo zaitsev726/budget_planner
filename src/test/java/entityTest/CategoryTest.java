@@ -18,7 +18,7 @@ public class CategoryTest {
     }
 
     @Test
-    public void testParameters(){
+    public void testCategoryParameters(){
         assertEquals(category.getCategoryName(), "RandomName");
         assertEquals((long) category.getIdCategory(),  1);
         assertEquals(category.getCurrentSum(), 100);
