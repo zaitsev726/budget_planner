@@ -1,9 +1,6 @@
 package entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -20,6 +17,9 @@ public class Income {
 
     @Column
     private Date date;
+
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private Category categoryIncome;
 
     public Income(){}
 
