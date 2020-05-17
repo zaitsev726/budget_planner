@@ -1,5 +1,6 @@
 package controller;
 
+import categories.Category;
 import service.BudgetPlannerService;
 
 import java.awt.*;
@@ -59,7 +60,20 @@ public class GuiController {
     }
 
     public List<String> getCategoryList() {
-        List<String> categoryList = new ArrayList<>(categoryController.getCategories().keySet());
-        return categoryList;
+        return new ArrayList<>(categoryController.getCategories().keySet());
+    }
+
+    public List<Double> getCategoryValuesList() {
+        List<Category> categoryList = new ArrayList<>(categoryController.getCategories().values());
+        categoryList.forEach(e -> {
+            for (int i = 0; i < (int) (Math.random() * 10.0); ++i)
+                e.addNewExpense(1.0);
+        });
+        List<Double> categorySizeList = new ArrayList<>();
+        categoryList.forEach(e -> categorySizeList.add((double) e.getExpenseHistory().size()));
+        double total = categorySizeList.stream().reduce(0.0, Double::sum);
+        List<Double> values = new ArrayList<>();
+        categorySizeList.forEach(e -> values.add(e / total * 100));
+        return values;
     }
 }

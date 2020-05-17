@@ -45,7 +45,7 @@ public class Category {
         incomeHistory.put(newIncome, date);
     }
 
-    public void addNewExpense(int expense) {
+    public void addNewExpense(double expense) {
         currentSum -= expense;
         Date date = new Date();
         String newExpense = "Расход: -" + expense + " " + date;

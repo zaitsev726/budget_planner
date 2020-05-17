@@ -8,6 +8,7 @@ import controller.GuiController;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainFrame extends JFrame {
@@ -65,13 +66,15 @@ public class MainFrame extends JFrame {
         }
     }
 
+    //TODO: нужно в pieChart1 разобраться со случаем, когда в категории еще нет никаких расходов
     private void createUIComponents() {
         int size = controller.getCategoryList().size();
-        List<Double> values = new ArrayList<>();
+        List<Double> values = controller.getCategoryValuesList();
         List<Color> colorList = controller.getColorList(size);
-        for (int i = 0; i < size; ++i)
-            values.add(100.0 / size);
-        pieChart1 = new PieChart(values, colorList);
+        if (values.get(0) == 0.0)
+            pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
+        else
+            pieChart1 = new PieChart(values, colorList);
         pieChart1.setPreferredSize(new Dimension(150, 150));
     }
 
