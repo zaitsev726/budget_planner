@@ -5,12 +5,16 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import controller.GuiController;
 import entities.Expense;
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.*;
 
 public class MainFrame extends JFrame {
     private JPanel totalPanel;
@@ -24,7 +28,9 @@ public class MainFrame extends JFrame {
     private JPanel morePanel;
     private JLabel categoryLabel;
     private JPanel expenseTemplatePanel;
-    private JPanel categoryExpenseLabel;
+    private JPanel categoryExpenseList;
+    private JTextField textField2;
+    private JPanel datePanel;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     private GuiController controller;
@@ -37,6 +43,7 @@ public class MainFrame extends JFrame {
                 (SCREEN_WIDTH - totalPanel.getPreferredSize().width) / 2,
                 (SCREEN_HEIGHT - totalPanel.getPreferredSize().height) / 2
         );
+
         setContentPane(totalPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         fillCategoryListPanel();
@@ -71,19 +78,22 @@ public class MainFrame extends JFrame {
                 activateMorePanel(category);
             });
         }
+        validate();
+        repaint();
     }
 
     private void activateMorePanel(String categoryName) {
         morePanel.setVisible(true);
         categoryLabel.setText(categoryName);
         List<Expense> expenseList = controller.getExpenseListByCategoryName(categoryName);
-        categoryListPanel.removeAll();
+        categoryExpenseList.removeAll();
         if (expenseList.isEmpty()) return;
-        categoryListPanel.setLayout(new GridLayoutManager(expenseList.size(), 1, new Insets(0, 0, 0, 0), -1, -1));
+        categoryExpenseList.setLayout(new GridLayoutManager(expenseList.size(), 1, new Insets(0, 0, 0, 0), -1, -1));
         for (Expense expense : expenseList) {
             expenseTemplatePanel = new JPanel();
+            categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
             expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
-            categoryExpenseLabel.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+            categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
             final JLabel label1 = new JLabel();
             Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
             if (label1Font != null) label1.setFont(label1Font);
@@ -108,9 +118,26 @@ public class MainFrame extends JFrame {
             editButton.setText("");
             expenseTemplatePanel.add(editButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
             editButton.addActionListener(e -> {
-
+                expenseTemplatePanel.removeAll();
+                expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+                JTextField textField = new JTextField();
+                expenseTemplatePanel.add(textField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
+                UtilDateModel model = new UtilDateModel();
+                Properties properties = new Properties();
+                properties.put("text.today", "Today");
+                properties.put("text.month", "Month");
+                properties.put("text.year", "Year");
+                JDatePanelImpl datePanel = new JDatePanelImpl(model, properties);
+                JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+                expenseTemplatePanel.add(datePicker, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
+                JButton saveButton = new JButton("OK");
+                expenseTemplatePanel.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), null, 0, false));
+                validate();
+                repaint();
             });
         }
+        validate();
+        repaint();
     }
 
     //TODO: нужно в pieChart1 разобраться со случаем, когда в категории еще нет никаких расходов
@@ -118,11 +145,31 @@ public class MainFrame extends JFrame {
         int size = controller.getCategoryList().size();
         List<Double> values = controller.getCategoryValuesList();
         List<Color> colorList = controller.getColorList(size);
-        if (values.get(0) == 0.0)
+        if (values.isEmpty() || values.get(0) == 0.0)
             pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
         else
             pieChart1 = new PieChart(values, colorList);
         pieChart1.setPreferredSize(new Dimension(150, 150));
+    }
+
+    private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+        private String datePattern = "yyyy-MM-dd";
+        private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+
+        @Override
+        public Object stringToValue(String text) throws ParseException {
+            return dateFormatter.parseObject(text);
+        }
+
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value != null) {
+                Calendar cal = (Calendar) value;
+                return dateFormatter.format(cal.getTime());
+            }
+
+            return "";
+        }
     }
 
     /**
@@ -157,19 +204,19 @@ public class MainFrame extends JFrame {
         morePanel = new JPanel();
         morePanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         morePanel.setVisible(true);
-        panel1.add(morePanel, new GridConstraints(0, 3, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(morePanel, new GridConstraints(0, 3, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(300, 250), null, 0, false));
         categoryLabel = new JLabel();
         categoryLabel.setText("Продукты");
         morePanel.add(categoryLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 30), null, 0, false));
         final JScrollPane scrollPane2 = new JScrollPane();
         morePanel.add(scrollPane2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        categoryExpenseLabel = new JPanel();
-        categoryExpenseLabel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        scrollPane2.setViewportView(categoryExpenseLabel);
+        categoryExpenseList = new JPanel();
+        categoryExpenseList.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        scrollPane2.setViewportView(categoryExpenseList);
         expenseTemplatePanel = new JPanel();
         expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         expenseTemplatePanel.setBackground(new Color(-657931));
-        categoryExpenseLabel.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
@@ -196,16 +243,41 @@ public class MainFrame extends JFrame {
         editButton.setText("");
         expenseTemplatePanel.add(editButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
         final Spacer spacer2 = new Spacer();
-        categoryExpenseLabel.add(spacer2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        categoryExpenseList.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        datePanel = new JPanel();
+        datePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        datePanel.setBackground(new Color(-657931));
+        categoryExpenseList.add(datePanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        Font label3Font = this.$$$getFont$$$(null, -1, -1, label3.getFont());
+        if (label3Font != null) label3.setFont(label3Font);
+        label3.setForeground(new Color(-7631989));
+        label3.setHorizontalAlignment(4);
+        label3.setHorizontalTextPosition(4);
+        label3.setText("22.05.2020");
+        datePanel.add(label3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JButton button3 = new JButton();
+        button3.setActionCommand("");
+        button3.setBorderPainted(true);
+        button3.setContentAreaFilled(true);
+        button3.setFocusPainted(true);
+        button3.setHorizontalAlignment(0);
+        button3.setHorizontalTextPosition(0);
+        button3.setIconTextGap(0);
+        button3.setSelected(false);
+        button3.setText("OK");
+        datePanel.add(button3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
+        textField2 = new JTextField();
+        datePanel.add(textField2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         morePanel.add(panel3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 25), null, 0, false));
-        final JButton button3 = new JButton();
-        button3.setBackground(new Color(-1));
-        button3.setText("+");
-        panel3.add(button3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 20), null, 0, false));
-        final JTextField textField2 = new JTextField();
-        panel3.add(textField2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 25), null, 0, false));
+        final JButton button4 = new JButton();
+        button4.setBackground(new Color(-1));
+        button4.setText("+");
+        panel3.add(button4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 20), null, 0, false));
+        final JTextField textField3 = new JTextField();
+        panel3.add(textField3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 25), null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel4.setBackground(new Color(-5131855));
@@ -225,9 +297,9 @@ public class MainFrame extends JFrame {
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel6.add(panel7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label3 = new JLabel();
-        label3.setText("Доходы (5000,00)");
-        panel7.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Доходы (5000,00)");
+        panel7.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane3 = new JScrollPane();
         panel7.add(scrollPane3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel8 = new JPanel();
@@ -237,49 +309,49 @@ public class MainFrame extends JFrame {
         panel9.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel9.setBackground(new Color(-657931));
         panel8.add(panel9, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        Font label4Font = this.$$$getFont$$$(null, Font.BOLD, -1, label4.getFont());
-        if (label4Font != null) label4.setFont(label4Font);
-        label4.setForeground(new Color(-16734075));
-        label4.setText("+5000,00");
-        panel9.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JButton button4 = new JButton();
-        button4.setActionCommand("");
-        button4.setBorderPainted(false);
-        button4.setContentAreaFilled(false);
-        button4.setFocusPainted(true);
-        button4.setHorizontalAlignment(4);
-        button4.setHorizontalTextPosition(4);
-        button4.setIcon(new ImageIcon(getClass().getResource("/edit.png")));
-        button4.setIconTextGap(0);
-        button4.setSelected(false);
-        button4.setText("");
-        panel9.add(button4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
         final JLabel label5 = new JLabel();
-        Font label5Font = this.$$$getFont$$$(null, -1, -1, label5.getFont());
+        Font label5Font = this.$$$getFont$$$(null, Font.BOLD, -1, label5.getFont());
         if (label5Font != null) label5.setFont(label5Font);
-        label5.setForeground(new Color(-7631989));
-        label5.setHorizontalAlignment(4);
-        label5.setHorizontalTextPosition(4);
-        label5.setText("22.05.2020");
-        panel9.add(label5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label5.setForeground(new Color(-16734075));
+        label5.setText("+5000,00");
+        panel9.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JButton button5 = new JButton();
+        button5.setActionCommand("");
+        button5.setBorderPainted(false);
+        button5.setContentAreaFilled(false);
+        button5.setFocusPainted(true);
+        button5.setHorizontalAlignment(4);
+        button5.setHorizontalTextPosition(4);
+        button5.setIcon(new ImageIcon(getClass().getResource("/edit.png")));
+        button5.setIconTextGap(0);
+        button5.setSelected(false);
+        button5.setText("");
+        panel9.add(button5, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
+        final JLabel label6 = new JLabel();
+        Font label6Font = this.$$$getFont$$$(null, -1, -1, label6.getFont());
+        if (label6Font != null) label6.setFont(label6Font);
+        label6.setForeground(new Color(-7631989));
+        label6.setHorizontalAlignment(4);
+        label6.setHorizontalTextPosition(4);
+        label6.setText("22.05.2020");
+        panel9.add(label6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         panel8.add(spacer3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel10 = new JPanel();
         panel10.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel7.add(panel10, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 25), null, 0, false));
-        final JButton button5 = new JButton();
-        button5.setBackground(new Color(-1));
-        button5.setText("+");
-        panel10.add(button5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 15), null, 0, false));
-        final JTextField textField3 = new JTextField();
-        panel10.add(textField3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 25), null, 0, false));
+        final JButton button6 = new JButton();
+        button6.setBackground(new Color(-1));
+        button6.setText("+");
+        panel10.add(button6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(15, 15), null, 0, false));
+        final JTextField textField4 = new JTextField();
+        panel10.add(textField4, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, 25), null, 0, false));
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel6.add(panel11, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label6 = new JLabel();
-        label6.setText("Расходы (1800,00)");
-        panel11.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label7 = new JLabel();
+        label7.setText("Расходы (1800,00)");
+        panel11.add(label7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane4 = new JScrollPane();
         panel11.add(scrollPane4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel12 = new JPanel();
@@ -289,28 +361,28 @@ public class MainFrame extends JFrame {
         panel13.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel13.setBackground(new Color(-657931));
         panel12.add(panel13, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 30), null, 0, false));
-        final JLabel label7 = new JLabel();
-        Font label7Font = this.$$$getFont$$$(null, Font.BOLD, -1, label7.getFont());
-        if (label7Font != null) label7.setFont(label7Font);
-        label7.setForeground(new Color(-7405514));
-        label7.setText("-1800,00");
-        panel13.add(label7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
-        Font label8Font = this.$$$getFont$$$(null, -1, -1, label8.getFont());
+        Font label8Font = this.$$$getFont$$$(null, Font.BOLD, -1, label8.getFont());
         if (label8Font != null) label8.setFont(label8Font);
-        label8.setForeground(new Color(-7631989));
-        label8.setHorizontalAlignment(4);
-        label8.setHorizontalTextPosition(4);
-        label8.setText("22.05.2020");
-        panel13.add(label8, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label8.setForeground(new Color(-7405514));
+        label8.setText("-1800,00");
+        panel13.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label9 = new JLabel();
+        Font label9Font = this.$$$getFont$$$(null, -1, -1, label9.getFont());
+        if (label9Font != null) label9.setFont(label9Font);
+        label9.setForeground(new Color(-7631989));
+        label9.setHorizontalAlignment(4);
+        label9.setHorizontalTextPosition(4);
+        label9.setText("22.05.2020");
+        panel13.add(label9, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         panel12.add(spacer4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel14 = new JPanel();
         panel14.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel6.add(panel14, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
-        final JLabel label9 = new JLabel();
-        label9.setText("Итого: 3200,00");
-        panel14.add(label9, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        label10.setText("Итого: 3200,00");
+        panel14.add(label10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel15 = new JPanel();
         panel15.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel15.setBackground(new Color(-5131855));
@@ -327,19 +399,19 @@ public class MainFrame extends JFrame {
         panel18.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         panel18.setBackground(new Color(-5131855));
         totalPanel.add(panel18, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(3, -1), null, 0, false));
-        final JLabel label10 = new JLabel();
-        Font label10Font = this.$$$getFont$$$(null, -1, -1, label10.getFont());
-        if (label10Font != null) label10.setFont(label10Font);
-        label10.setHorizontalAlignment(0);
-        label10.setHorizontalTextPosition(0);
-        label10.setText("<html>Р<br>А<br>С<br>Х<br>О<br>Д<br>Ы");
-        totalPanel.add(label10, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label11 = new JLabel();
-        label11.setAlignmentX(0.5f);
+        Font label11Font = this.$$$getFont$$$(null, -1, -1, label11.getFont());
+        if (label11Font != null) label11.setFont(label11Font);
         label11.setHorizontalAlignment(0);
         label11.setHorizontalTextPosition(0);
-        label11.setText("<html>И<br>С<br>Т<br>О<br>Р<br>И<br>Я");
-        totalPanel.add(label11, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label11.setText("<html>Р<br>А<br>С<br>Х<br>О<br>Д<br>Ы");
+        totalPanel.add(label11, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label12 = new JLabel();
+        label12.setAlignmentX(0.5f);
+        label12.setHorizontalAlignment(0);
+        label12.setHorizontalTextPosition(0);
+        label12.setText("<html>И<br>С<br>Т<br>О<br>Р<br>И<br>Я");
+        totalPanel.add(label12, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
         totalPanel.add(spacer5, new GridConstraints(1, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, new Dimension(10, -1), null, 0, false));
         final Spacer spacer6 = new Spacer();
