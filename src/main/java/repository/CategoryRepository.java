@@ -4,53 +4,75 @@ import entities.Category;
 
 import javax.persistence.*;
 
-public class CategoryRepository{
+public class CategoryRepository {
     EntityManagerFactory emf;
 
-    public CategoryRepository(){
+    public CategoryRepository() {
         emf = Persistence.createEntityManagerFactory("model");
     }
 
-    public void saveCategory(Category category){
+    public void saveCategory(Category category) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(category);
         em.getTransaction().commit();
     }
 
-    public void deleteCategory(long id_category){
+    public void deleteCategory(long id_category) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             em.getTransaction().begin();
             Query query = em.createQuery("delete from Category c where c.idCategory= :id");
             query.setParameter("id", id_category);
             query.executeUpdate();
             em.getTransaction().commit();
             em.close();
-        }catch (RollbackException e){
+        } catch (RollbackException e) {
             e.printStackTrace();
             em.getTransaction().rollback();
         }
     }
 
-    public Category updateCategory(Category category){
+    public void deleteCategory(String categoryName) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
+            em.getTransaction().begin();
+            Query query = em.createQuery("delete from Category c where c.categoryName= :name");
+            query.setParameter("name", categoryName);
+            query.executeUpdate();
+            em.getTransaction().commit();
+            em.close();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
+    }
+
+    public Category updateCategory(Category category) {
+        EntityManager em = emf.createEntityManager();
+        try {
             em.getTransaction().begin();
             category = em.merge(category);
             em.getTransaction().commit();
             em.close();
-        }catch (RollbackException e){
+        } catch (RollbackException e) {
             e.printStackTrace();
             em.getTransaction().rollback();
         }
         return category;
     }
 
-    public Category findByIdCategory(Long id_category){
+    public Category findByIdCategory(long id_category) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
                 .setParameter("id", id_category)
+                .getSingleResult();
+    }
+
+    public Category findByNameCategory(String nameCategory) {
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select c from Category c where c.categoryName = :name", Category.class)
+                .setParameter("name", nameCategory)
                 .getSingleResult();
     }
 }

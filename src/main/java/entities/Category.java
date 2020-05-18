@@ -10,7 +10,7 @@ public class Category {
     private Long idCategory;
 
     @Column
-    private int currentSum;
+    private double currentSum;
 
     @Column
     private String categoryName;
@@ -27,9 +27,9 @@ public class Category {
 
     public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
 
-    public int getCurrentSum() { return currentSum; }
+    public double getCurrentSum() { return currentSum; }
 
-    public void setCurrentSum(int currentSum) { this.currentSum = currentSum; }
+    public void setCurrentSum(double currentSum) { this.currentSum = currentSum; }
 
     public String getCategoryName() { return categoryName; }
 
