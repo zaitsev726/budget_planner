@@ -47,4 +47,10 @@ public class CategoryRepository{
         return category;
     }
 
+    public Category findByIdCategory(Long id_category){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
+                .setParameter("id", id_category)
+                .getSingleResult();
+    }
 }

@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import repository.CategoryRepository;
 
+import static org.junit.Assert.assertEquals;
+
 public class CategoryRepositoryTest {
     CategoryRepository categoryRepository;
 
@@ -35,7 +37,15 @@ public class CategoryRepositoryTest {
     }
 
     @Test
-    public void updatingTest(){
-        
+    public void findingTest(){
+        Category category = categoryRepository.findByIdCategory((long) 3);
+        assertEquals(category.getCategoryName(), "Подарки");
+        assertEquals(category.getCurrentSum(), 200);
+
+        category = categoryRepository.findByIdCategory((long) 4);
+        assertEquals(category.getCategoryName(), "Зарплата");
+        assertEquals(category.getCurrentSum(), 1000);
     }
+
+
 }
