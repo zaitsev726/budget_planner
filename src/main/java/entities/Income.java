@@ -18,7 +18,7 @@ public class Income {
     @Column
     private Date date;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Category categoryIncome;
 
     public Income(){}
