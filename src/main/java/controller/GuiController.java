@@ -5,8 +5,8 @@ import service.BudgetPlannerService;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class GuiController {
@@ -102,8 +102,18 @@ public class GuiController {
         List<Expense> testList = new ArrayList<>();
         Expense e = new Expense();
         e.setSum(1800.0);
-        e.setDate(new Date(2020, Calendar.JANUARY,22));
+        e.setDate(new GregorianCalendar(2020, GregorianCalendar.FEBRUARY, 22).getTime());
         testList.add(e);
         return testList;
+    }
+
+    /**
+     * Изменение значений расхода по категории
+     * @param expense изменяемый расход
+     * @param sum новое значение суммы
+     * @param date новая дата расхода
+     */
+    public void setNewCategoryExpense(Expense expense, double sum, Date date) {
+
     }
 }
