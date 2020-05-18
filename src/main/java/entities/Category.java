@@ -1,7 +1,9 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class Category {
@@ -10,14 +12,39 @@ public class Category {
     private Long idCategory;
 
     @Column
-    private int currentSum;
+    private double currentSum;
 
     @Column
     private String categoryName;
 
     @OneToMany(mappedBy = "categoryExpense", fetch = FetchType.LAZY)
-    private Collection<Expense> expenses;
+    private List<Expense> expenses = new ArrayList<>();
 
+    public List<Expense> getExpenses() { return expenses; }
+
+    public void addExpense(Expense expense){
+        addExpense(expense,true);
+    }
+
+    void addExpense(Expense expense, boolean set){
+        if(expense!= null){
+            if(getExpenses().contains(expense)){
+                getExpenses().set(getExpenses().indexOf(expense), expense);
+            }else{
+                getExpenses().add(expense);
+            }
+            if(set){
+                expense.setCategoryExpense(this,false);
+            }
+        }
+    }
+
+    public void setExpenses(List<Expense> expenses) { this.expenses = expenses; }
+
+    public void removeExpense(Expense expense){
+        getExpenses().remove(expense);
+        expense.setCategoryExpense(null);
+    }
     @OneToMany(mappedBy = "categoryIncome", fetch = FetchType.LAZY)
     private Collection<Income> incomes;
 
@@ -25,11 +52,9 @@ public class Category {
 
     public Long getIdCategory() { return idCategory; }
 
-    public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
+    public double getCurrentSum() { return currentSum; }
 
-    public int getCurrentSum() { return currentSum; }
-
-    public void setCurrentSum(int currentSum) { this.currentSum = currentSum; }
+    public void setCurrentSum(double currentSum) { this.currentSum = currentSum; }
 
     public String getCategoryName() { return categoryName; }
 

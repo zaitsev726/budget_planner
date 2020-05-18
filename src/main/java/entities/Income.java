@@ -13,12 +13,12 @@ public class Income {
     private Long idCategory;
 
     @Column
-    private int sum;
+    private double sum;
 
     @Column
     private Date date;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Category categoryIncome;
 
     public Income(){}
@@ -31,9 +31,9 @@ public class Income {
 
     public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
 
-    public int getSum() { return sum; }
+    public double getSum() { return sum; }
 
-    public void setSum(int sum) { this.sum = sum; }
+    public void setSum(double sum) { this.sum = sum; }
 
     public Date getDate() { return date; }
 

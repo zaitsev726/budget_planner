@@ -13,7 +13,7 @@ public class CategoryTest {
     public void setCategory(){
         category = new Category();
         category.setCategoryName("RandomName");
-        category.setIdCategory((long) 1);
+        //category.setIdCategory((long) 1);
         category.setCurrentSum(100);
     }
 
