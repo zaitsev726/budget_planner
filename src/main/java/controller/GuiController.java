@@ -1,6 +1,7 @@
 package controller;
 
-import categories.Category;
+import entities.Category;
+import entities.Expense;
 import service.BudgetPlannerService;
 
 import java.awt.*;
@@ -59,21 +60,34 @@ public class GuiController {
         return colorList;
     }
 
+    /**
+     *
+     * @return список, состоящий из названий категорий
+     */
     public List<String> getCategoryList() {
-        return new ArrayList<>(categoryController.getCategories().keySet());
+        return new ArrayList<>(/*categoryController.getCategories().keySet()*/);
     }
 
+    /**
+     * Для всех категорий считаем, какой процент они вкладывают в расход по всем категориям
+     * @return список процентов, который соответствует списку категорий, возвращаемых getCategoryList()
+     */
     public List<Double> getCategoryValuesList() {
-        List<Category> categoryList = new ArrayList<>(categoryController.getCategories().values());
-        categoryList.forEach(e -> {
-            for (int i = 0; i < (int) (Math.random() * 10.0); ++i)
-                e.addNewExpense(1.0);
-        });
+        List<Category> categoryList = new ArrayList<>(/*categoryController.getCategories().values()*/);
         List<Double> categorySizeList = new ArrayList<>();
-        categoryList.forEach(e -> categorySizeList.add((double) e.getExpenseHistory().size()));
+        categoryList.forEach(e -> categorySizeList.add(0.0 /*e.getExpenseHistory().size()*/));
         double total = categorySizeList.stream().reduce(0.0, Double::sum);
         List<Double> values = new ArrayList<>();
         categorySizeList.forEach(e -> values.add(e / total * 100));
         return values;
+    }
+
+    /**
+     *
+     * @param categoryName название категории
+     * @return лист расходов для категории с названием categoryName
+     */
+    public List<Expense> getExpenseListByCategoryName(String categoryName) {
+        return null;
     }
 }
