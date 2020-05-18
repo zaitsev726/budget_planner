@@ -13,7 +13,7 @@ public class Expense {
     private Long idCategory;
 
     @Column
-    private int sum;
+    private double sum;
 
     @Column
     private Date date;
@@ -31,9 +31,9 @@ public class Expense {
 
     public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
 
-    public int getSum() { return sum; }
+    public double getSum() { return sum; }
 
-    public void setSum(int sum) { this.sum = sum; }
+    public void setSum(double sum) { this.sum = sum; }
 
     public Date getDate() { return date; }
 

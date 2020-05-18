@@ -2,7 +2,7 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PieChart extends JPanel {
 
@@ -12,11 +12,9 @@ public class PieChart extends JPanel {
 
     private Type type = null; //the type of pie chart
 
-    private ArrayList values;
-    private ArrayList colors;
+    private List<Double> values;
+    private List<Color> colors;
 
-    private ArrayList gradingValues;
-    private ArrayList gradingColors;
 
     double percent = 0; //percent is used for simple indicator and graded indicator
 
@@ -26,21 +24,12 @@ public class PieChart extends JPanel {
         this.percent = percent;
     }
 
-    public PieChart(ArrayList values, ArrayList colors) {
+    public PieChart(List<Double> values, List<Color> colors) {
 
         type = Type.STANDARD;
 
         this.values = values;
         this.colors = colors;
-    }
-
-    public PieChart(int percent, ArrayList gradingValues, ArrayList gradingColors) {
-        type = Type.GRADED_INDICATOR;
-
-        this.gradingValues = gradingValues;
-        this.gradingColors = gradingColors;
-        this.percent = percent;
-
     }
 
     @Override
@@ -79,46 +68,6 @@ public class PieChart extends JPanel {
                         + -angle.intValue());
 
                 lastPoint = lastPoint + -angle.intValue();
-            }
-        } else if (type == Type.GRADED_INDICATOR) {
-
-            int lastPoint = -270;
-
-            double gradingAccum = 0;
-
-            for (int i = 0; i < gradingValues.size(); i++) {
-                g2d.setColor((Color) gradingColors.get(i));
-                Double val = (Double) gradingValues.get(i);
-                gradingAccum = gradingAccum + val;
-                Double angle = null;                                /**                 * If the sum of the gradings is greater than the percent, then we want to recalculate 				 * the last wedge, and break out of drawing. 				 */
-                if (gradingAccum > percent) {
-
-                    System.out.println("gradingAccum > percent");
-
-                    //get the previous accumulated segments. Segments minus last one
-                    double gradingAccumMinusOneSegment = gradingAccum - val;
-
-                    //make an adjusted calculation of the last wedge
-                    angle = ((percent - gradingAccumMinusOneSegment) / 100) * 360;
-
-                    g2d.fillArc(0, 0, width, width, lastPoint, -angle.intValue());
-
-                    lastPoint = lastPoint + -angle.intValue();
-
-                    break;
-
-                } else {
-
-                    System.out.println("normal");
-                    angle = (val / 100) * 360;
-
-                    g2d.fillArc(0, 0, width, width, lastPoint, -angle.intValue());
-
-                    System.out.println("fill arc " + lastPoint + " "
-                            + -angle.intValue());
-
-                    lastPoint = lastPoint + -angle.intValue();
-                }
             }
         }
     }
