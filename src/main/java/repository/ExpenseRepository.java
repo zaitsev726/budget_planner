@@ -61,4 +61,11 @@ public class ExpenseRepository {
                 .setParameter("id", id_category)
                 .getResultList();
     }
+
+    public Expense findByIdExpense(Long id_expense){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select e from Expense e where e.idExpense = :id", Expense.class)
+                .setParameter("id", id_expense)
+                .getSingleResult();
+    }
 }

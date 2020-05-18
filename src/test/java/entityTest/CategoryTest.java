@@ -13,14 +13,12 @@ public class CategoryTest {
     public void setCategory(){
         category = new Category();
         category.setCategoryName("RandomName");
-        //category.setIdCategory((long) 1);
         category.setCurrentSum(100);
     }
 
     @Test
     public void testCategoryParameters(){
         assertEquals(category.getCategoryName(), "RandomName");
-        assertEquals((long) category.getIdCategory(),  1);
         assertEquals(category.getCurrentSum(), 100);
     }
 }
