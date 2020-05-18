@@ -1,29 +1,29 @@
 package repository;
 
-import entities.Category;
+import entities.Expense;
 
 import javax.persistence.*;
 
-public class CategoryRepository{
+public class ExpenseRepository {
     EntityManagerFactory emf;
 
-    public CategoryRepository(){
+    public ExpenseRepository(){
         emf = Persistence.createEntityManagerFactory("model");
     }
 
-    public void saveCategory(Category category){
+    public void saveExpense(Expense expense){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(category);
+        em.persist(expense);
         em.getTransaction().commit();
     }
 
-    public void deleteCategory(long id_category){
+    public void deleteExpense(long id_expense){
         EntityManager em = emf.createEntityManager();
         try{
             em.getTransaction().begin();
-            Query query = em.createQuery("delete from Category c where c.idCategory= :id");
-            query.setParameter("id", id_category);
+            Query query = em.createQuery("delete from Expense e where e.idExpense= :id");
+            query.setParameter("id", id_expense);
             query.executeUpdate();
             em.getTransaction().commit();
             em.close();
@@ -33,18 +33,17 @@ public class CategoryRepository{
         }
     }
 
-    public Category updateCategory(Category category){
+    public Expense updateExpense(Expense expense){
         EntityManager em = emf.createEntityManager();
         try{
             em.getTransaction().begin();
-            category = em.merge(category);
+            expense = em.merge(expense);
             em.getTransaction().commit();
             em.close();
         }catch (RollbackException e){
             e.printStackTrace();
             em.getTransaction().rollback();
         }
-        return category;
+        return expense;
     }
-
 }

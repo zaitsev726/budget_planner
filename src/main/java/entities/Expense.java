@@ -18,6 +18,9 @@ public class Expense {
     @Column
     private Date date;
 
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private Category categoryExpense;
+
     public Expense(){}
 
     public Long getIdExpense() { return idExpense; }

@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 public class Category {
@@ -13,6 +14,12 @@ public class Category {
 
     @Column
     private String categoryName;
+
+    @OneToMany(mappedBy = "categoryExpense", fetch = FetchType.LAZY)
+    private Collection<Expense> expenses;
+
+    @OneToMany(mappedBy = "categoryIncome", fetch = FetchType.LAZY)
+    private Collection<Income> incomes;
 
     public Category(){}
 

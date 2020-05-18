@@ -1,29 +1,29 @@
 package repository;
 
-import entities.Category;
+import entities.Income;
 
 import javax.persistence.*;
 
-public class CategoryRepository{
+public class IncomeRepository {
     EntityManagerFactory emf;
 
-    public CategoryRepository(){
+    public IncomeRepository(){
         emf = Persistence.createEntityManagerFactory("model");
     }
 
-    public void saveCategory(Category category){
+    public void saveIncome(Income income){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.persist(category);
+        em.persist(income);
         em.getTransaction().commit();
     }
 
-    public void deleteCategory(long id_category){
+    public void deleteIncome(long id_income){
         EntityManager em = emf.createEntityManager();
         try{
             em.getTransaction().begin();
-            Query query = em.createQuery("delete from Category c where c.idCategory= :id");
-            query.setParameter("id", id_category);
+            Query query = em.createQuery("delete from Income i where i.idIncome= :id");
+            query.setParameter("id", id_income);
             query.executeUpdate();
             em.getTransaction().commit();
             em.close();
@@ -33,18 +33,17 @@ public class CategoryRepository{
         }
     }
 
-    public Category updateCategory(Category category){
+    public Income updateIncome(Income income){
         EntityManager em = emf.createEntityManager();
         try{
             em.getTransaction().begin();
-            category = em.merge(category);
+            income = em.merge(income);
             em.getTransaction().commit();
             em.close();
         }catch (RollbackException e){
             e.printStackTrace();
             em.getTransaction().rollback();
         }
-        return category;
+        return income;
     }
-
 }
