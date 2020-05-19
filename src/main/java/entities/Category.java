@@ -44,34 +44,6 @@ public class Category {
         getExpenses().remove(expense);
         expense.setCategoryExpense(null);
     }
-    @OneToMany(mappedBy = "categoryIncome", fetch = FetchType.LAZY)
-    private List<Income> incomes = new ArrayList<>();
-
-    public List<Income> getIncomes() { return incomes; }
-
-    public void addIncome(Income income){
-        addIncome(income,true);
-    }
-
-    void addIncome(Income income, boolean set){
-        if(income!= null){
-            if(getIncomes().contains(income)){
-                getIncomes().set(getIncomes().indexOf(income), income);
-            }else{
-                getIncomes().add(income);
-            }
-            if(set){
-                income.setCategoryIncome(this,false);
-            }
-        }
-    }
-
-    public void setIncomes(List<Income> incomes) { this.incomes = incomes; }
-
-    public void removeIncome(Income income){
-        getExpenses().remove(income);
-        income.setCategoryIncome(null);
-    }
 
     public Category(){}
 
