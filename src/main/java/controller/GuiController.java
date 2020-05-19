@@ -18,7 +18,8 @@ public class GuiController {
     private int currentYear;
     //test
     private List<Expense> testList;
-    List<String> categoryList;
+    private List<Income> testIncomeList;
+    private List<String> categoryList;
 
     //
     public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
@@ -34,6 +35,15 @@ public class GuiController {
         categoryList.add("Здоровье");
         categoryList.add("Рестораны");
 
+        testIncomeList = new ArrayList<>();
+        Income i1 = new Income();
+        i1.setSum(200.0);
+        i1.setDate(new GregorianCalendar(2020, Calendar.MARCH, 13).getTime());
+        testIncomeList.add(i1);
+        Income i2 = new Income();
+        i2.setDate(new GregorianCalendar(2020, Calendar.MAY, 11).getTime());
+        i2.setSum(12000.0);
+        testIncomeList.add(i2);
         testList = new ArrayList<>();
         Expense e = new Expense();
         e.setSum(1800.0);
@@ -81,12 +91,6 @@ public class GuiController {
      * @return список процентов, который соответствует списку категорий, возвращаемых getCategoryList()
      */
     public List<Double> getCategoryValuesList() {
-        /*List<Category> categoryList = new ArrayList<>(/*categoryController.getCategories().values());
-        List<Double> categorySizeList = new ArrayList<>();
-        categoryList.forEach(e -> categorySizeList.add(0.0 /*e.getExpenseHistory().size()));
-        double total = categorySizeList.stream().reduce(0.0, Double::sum);
-        List<Double> values = new ArrayList<>();
-        categorySizeList.forEach(e -> values.add(e / total * 100));*/
         List<Double> testValues = new ArrayList<>();
         testValues.add(0.0);
         testValues.add(50.0);
@@ -96,7 +100,7 @@ public class GuiController {
     }
 
     /**
-     * Выводит список расходов по категории в упорядоченном порядке (desc)
+     * Выводит список расходов по категории в упорядоченном порядке (desc) для текущего месяца
      *
      * @param categoryName название категории
      * @return лист расходов для категории с названием categoryName
@@ -107,7 +111,7 @@ public class GuiController {
     }
 
     /**
-     * Изменение значений расхода по категории
+     * Изменение значения конкретного расхода по категории в текущем месяце
      *
      * @param expense изменяемый расход
      * @param sum     новое значение суммы
@@ -121,7 +125,21 @@ public class GuiController {
     }
 
     /**
-     * Добавление новой категории
+     * Изменение значения конкретного дохода в текущем месяце
+     *
+     * @param income изменяемый доход
+     * @param sum    новое значение суммы
+     * @param date   новая дата дохода
+     */
+    public void setNewIncome(Income income, double sum, Date date) {
+        int index = testIncomeList.indexOf(income);
+        Income updated = testIncomeList.get(index);
+        updated.setSum(sum);
+        updated.setDate(date);
+    }
+
+    /**
+     * Добавление новой категории во все месяца (?)
      *
      * @param categoryName название категории
      */
@@ -130,32 +148,51 @@ public class GuiController {
     }
 
     /**
-     * @return список доходов
+     * @return список доходов за текущий месяц
      */
     public List<Income> getIncomeList() {
-        return new ArrayList<>();
+        return testIncomeList;
     }
 
     /**
-     * @return сумму всех
+     * @return сумму всех доходов за текущий месяц
      */
     public float getTotalIncome() {
         return 5000.0f;
     }
 
+    /**
+     *
+     * @return текущий месяц
+     */
     public String getCurrentMonth() {
         return currentMonth.toString() + " " + currentYear;
     }
 
+    /**
+     * Устанавливает текущий месяц меньше на 1
+     */
     public void setPreviousMonth() {
         currentMonth = currentMonth.minus(1L);
         if (currentMonth.equals(Month.DECEMBER))
             currentYear -= 1;
     }
 
+    /**
+     * Устанавливает текущий месяц больше на 1
+     */
     public void setNextMonth() {
         currentMonth = currentMonth.plus(1L);
         if (currentMonth.equals(Month.JANUARY))
             currentYear += 1;
+    }
+
+    /**
+     *
+     * @param categoryName
+     * @param sum
+     */
+    public void addNewExpenseByCategory(String categoryName, double sum) {
+
     }
 }
