@@ -32,6 +32,7 @@ public class PieChart extends JPanel {
         this.colors = colors;
     }
 
+
     @Override
     protected void paintComponent(Graphics g) {
 

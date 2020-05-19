@@ -17,6 +17,7 @@ public class GuiController {
     private final Random rand = new Random();
     private Month currentMonth;
     private int currentYear;
+    private List<Color> colorList;
     //test
     private List<Expense> testList;
     private List<Income> testIncomeList;
@@ -29,6 +30,7 @@ public class GuiController {
         LocalDate currentDate = LocalDate.now();
         currentMonth = currentDate.getMonth();
         currentYear = currentDate.getYear();
+        generateColorList();
         //test
         categoryList = new ArrayList<>();
         categoryList.add("Продукты");
@@ -64,7 +66,12 @@ public class GuiController {
      * @return список Color'ов
      */
     public List<Color> getColorList(int size) {
-        List<Color> colorList = new ArrayList<>();
+        return colorList.subList(0,size);
+    }
+
+    private void generateColorList() {
+        int size = 10000;
+        colorList = new ArrayList<>();
         float r;
         float g;
         float b;
@@ -76,7 +83,6 @@ public class GuiController {
             } while (colorList.contains(new Color(r, g, b)));
             colorList.add(new Color(r, g, b));
         }
-        return colorList;
     }
 
     /**
@@ -97,7 +103,15 @@ public class GuiController {
         testValues.add(50.0);
         testValues.add(25.0);
         testValues.add(25.0);
-        return testValues;
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        testValues.add(12.5);
+        return testValues.subList(0, categoryList.size());
     }
 
     /**

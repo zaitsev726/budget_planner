@@ -19,7 +19,6 @@ import java.util.*;
 
 public class MainFrame extends JFrame {
     private JPanel totalPanel;
-    private PieChart pieChart1;
     private JButton button2;
     private JTextField textField1;
     private JButton moreButton;
@@ -49,7 +48,7 @@ public class MainFrame extends JFrame {
     private JPanel totalExpenseTemplatePanel;
     private JLabel expenseSumLabel;
     private JLabel expenseDateLabel;
-    private JPanel trapPanel;
+    private JPanel trap;
     private JButton бButton;
     private static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     private static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
@@ -71,7 +70,6 @@ public class MainFrame extends JFrame {
         monthLabel.setText(controller.getCurrentMonth());
         pack();
         setVisible(true);
-        generateColorsValuesAndPieChart();
         fillCategoryListPanel();
         fillIncomeListPanel();
         button2.addActionListener(e -> {
@@ -179,7 +177,7 @@ public class MainFrame extends JFrame {
         categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(i++, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         final JLabel label1 = new JLabel();
-        Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, -1);
+        Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, label1.getFont().getSize());
         label1.setFont(label1Font);
         label1.setText(String.valueOf(expense.getSum()));
         expenseTemplatePanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -281,7 +279,7 @@ public class MainFrame extends JFrame {
         incomeTemplatePanel.setBackground(new Color(-657931));
         incomeListPanel.add(incomeTemplatePanel, new GridConstraints(i++, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
-        Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, -1);
+        Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, label1.getFont().getSize());
         label1.setFont(label1Font);
         label1.setForeground(new Color(-16734075));
         label1.setText("+" + income.getSum());
@@ -367,7 +365,7 @@ public class MainFrame extends JFrame {
         totalExpenseTemplatePanel.setBackground(new Color(-657931));
         expenseListPanel.add(totalExpenseTemplatePanel, new GridConstraints(i++, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 30), null, 0, false));
         JLabel expenseSumLabel = new JLabel();
-        Font expenseSumLabelFont = new Font(expenseSumLabel.getFont().getName(), Font.BOLD, -1);
+        Font expenseSumLabelFont = new Font(expenseSumLabel.getFont().getName(), Font.BOLD, expenseSumLabel.getFont().getSize());
         expenseSumLabel.setFont(expenseSumLabelFont);
         expenseSumLabel.setForeground(new Color(-7405514));
         expenseSumLabel.setText("-" + expense.getSum());
@@ -383,9 +381,8 @@ public class MainFrame extends JFrame {
     }
 
     private void createUIComponents() {
-        if (controller == null)
-            pieChart1 = new PieChart(0);
-        else generateColorsValuesAndPieChart();
+        if (controller != null)
+            generateColorsValuesAndPieChart();
     }
 
     //TODO: нужно в pieChart1 разобраться со случаем, когда в категории еще нет никаких расходов
@@ -393,14 +390,18 @@ public class MainFrame extends JFrame {
         int size = controller.getCategoryList().size();
         List<Double> values = controller.getCategoryValuesList();
         colorList = controller.getColorList(size);
+        PieChart pieChart;
         if (values.isEmpty())
-            pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
+            pieChart = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
         else
-            pieChart1 = new PieChart(values, colorList);
-        pieChart1.setPreferredSize(new Dimension(150, 150));
-        trapPanel = new JPanel();
-        trapPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        trapPanel.add(pieChart1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+            pieChart = new PieChart(values, colorList);
+        pieChart.setPreferredSize(new Dimension(150, 150));
+
+        trap.removeAll();
+        trap.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        trap.add(pieChart, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        trap.revalidate();
+        trap.repaint();
         validate();
         repaint();
     }
