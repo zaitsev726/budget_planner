@@ -32,7 +32,7 @@ public class ExpenseRepositoryTest {
 
        // System.out.println("*****************" + category.getIdCategory());
         expense1 = new Expense();
-          expense1.setIdCategory(category.getIdCategory());
+        expense1.setIdCategory(category.getIdCategory());
         expense1.setSum(100);
         //expense1.setCategoryExpense(category);
         first = new Date();

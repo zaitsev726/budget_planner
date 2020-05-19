@@ -27,7 +27,7 @@ public class MainFrame extends JFrame {
     private JScrollPane scrollPane1;
     private JPanel morePanel;
     private JLabel categoryLabel;
-    private JPanel expenseTemplatePanel;
+    //private JPanel expenseTemplatePanel;
     private JPanel categoryExpenseList;
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
@@ -87,11 +87,12 @@ public class MainFrame extends JFrame {
         categoryExpenseList.removeAll();
         if (expenseList.isEmpty()) return;
         categoryExpenseList.setLayout(new GridLayoutManager(expenseList.size() + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        int i = 0;
         for (Expense expense : expenseList) {
-            expenseTemplatePanel = new JPanel();
-            categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+            JPanel expenseTemplatePanel = new JPanel();
+            expenseTemplatePanel.setBackground(new Color(-657931));
+            categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(i++, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
             expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
-            categoryExpenseList.add(expenseTemplatePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
             final JLabel label1 = new JLabel();
             Font label1Font = this.$$$getFont$$$(null, Font.BOLD, -1, label1.getFont());
             if (label1Font != null) label1.setFont(label1Font);
@@ -141,13 +142,17 @@ public class MainFrame extends JFrame {
                         JOptionPane.showMessageDialog(null, "Некорректно введена сумма расхода");
                         return;
                     }
+                    if (datePicker.getModel().getValue() == null) {
+                        JOptionPane.showMessageDialog(null, "Выберите дату");
+                        return;
+                    }
                     controller.setNewCategoryExpense(expense, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
                     activateMorePanel(categoryName);
                 });
             });
         }
         final Spacer spacer2 = new Spacer();
-        categoryExpenseList.add(spacer2, new GridConstraints(expenseList.size(), 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        categoryExpenseList.add(spacer2, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         validate();
         repaint();
     }
@@ -157,7 +162,7 @@ public class MainFrame extends JFrame {
         int size = controller.getCategoryList().size();
         List<Double> values = controller.getCategoryValuesList();
         List<Color> colorList = controller.getColorList(size);
-        if (values.isEmpty() || values.get(0) == 0.0)
+        if (values.isEmpty())
             pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
         else
             pieChart1 = new PieChart(values, colorList);
@@ -216,7 +221,7 @@ public class MainFrame extends JFrame {
         morePanel = new JPanel();
         morePanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         morePanel.setVisible(false);
-        panel1.add(morePanel, new GridConstraints(0, 3, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(300, 250), null, 0, false));
+        panel1.add(morePanel, new GridConstraints(0, 3, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(300, -1), null, 0, false));
         categoryLabel = new JLabel();
         categoryLabel.setText("Продукты");
         morePanel.add(categoryLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 30), null, 0, false));

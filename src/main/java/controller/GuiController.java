@@ -12,20 +12,36 @@ import java.util.List;
 public class GuiController {
     private BudgetPlannerService service;
     private CategoryController categoryController;
+    //test
+    private List<Expense> testList;
 
+    //
     public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
         service = budgetPlannerService;
         this.categoryController = categoryController;
+        //test
+        testList = new ArrayList<>();
+        Expense e = new Expense();
+        e.setSum(1800.0);
+        e.setDate(new GregorianCalendar(2020, GregorianCalendar.FEBRUARY, 22).getTime());
+        testList.add(e);
+        Expense e2 = new Expense();
+        e2.setSum(200.0);
+        e2.setDate(new GregorianCalendar(2020, GregorianCalendar.MAY, 15).getTime());
+        testList.add(e2);
+        //
     }
 
     public List<Color> getColorList(int size) {
         List<Color> colorList = new ArrayList<>();
         int constant = 0;
         int k = 1;
-        int step = 75;
+        int step = 100;
         int delta = 0;
         int change = 0;
         for (int i = 0; i < size; ++i) {
+            colorList.add(new Color((int) Math.pow(8, i)));
+            /*
             if (constant == 0) {
                 if (k == 1 && change == 0 || k == -1 && change == 1) {
                     colorList.add(new Color(255, delta, 0));
@@ -56,13 +72,12 @@ public class GuiController {
                 constant = (++constant) % 3;
                 k = -k;
                 change = 1;
-            }
+            }*/
         }
         return colorList;
     }
 
     /**
-     *
      * @return список, состоящий из названий категорий
      */
     public List<String> getCategoryList() {
@@ -76,6 +91,7 @@ public class GuiController {
 
     /**
      * Для всех категорий считаем, какой процент они вкладывают в расход по всем категориям
+     *
      * @return список процентов, который соответствует списку категорий, возвращаемых getCategoryList()
      */
     public List<Double> getCategoryValuesList() {
@@ -90,30 +106,31 @@ public class GuiController {
         testValues.add(50.0);
         testValues.add(25.0);
         testValues.add(25.0);
-        return new ArrayList<>();
+        return testValues;
     }
 
     /**
+     * Выводит список расходов по категории в упорядоченном порядке (desc)
      *
      * @param categoryName название категории
      * @return лист расходов для категории с названием categoryName
      */
     public List<Expense> getExpenseListByCategoryName(String categoryName) {
-        List<Expense> testList = new ArrayList<>();
-        Expense e = new Expense();
-        e.setSum(1800.0);
-        e.setDate(new GregorianCalendar(2020, GregorianCalendar.FEBRUARY, 22).getTime());
-        testList.add(e);
+
         return testList;
     }
 
     /**
      * Изменение значений расхода по категории
+     *
      * @param expense изменяемый расход
-     * @param sum новое значение суммы
-     * @param date новая дата расхода
+     * @param sum     новое значение суммы
+     * @param date    новая дата расхода
      */
     public void setNewCategoryExpense(Expense expense, double sum, Date date) {
-
+        int index = testList.indexOf(expense);
+        Expense updated = testList.get(index);
+        updated.setDate(date);
+        updated.setSum(sum);
     }
 }
