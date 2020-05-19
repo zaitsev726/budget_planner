@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.istack.NotNull;
 import entities.Expense;
 import entities.Income;
 import service.BudgetPlannerService;
@@ -106,7 +107,6 @@ public class GuiController {
      * @return лист расходов для категории с названием categoryName
      */
     public List<Expense> getExpenseListByCategoryName(String categoryName) {
-
         return testList;
     }
 
@@ -208,5 +208,22 @@ public class GuiController {
         income.setSum(sum);
         income.setDate(new Date());
         testIncomeList.add(income);
+    }
+
+    /**
+     *
+     * @return список расходов по ВСЕМ категориям за текущий месяц
+     */
+    @NotNull
+    public List<Expense> getExpenseList() {
+        return new ArrayList<>();
+    }
+
+    /**
+     *
+     * @return возвращает общую сумму расходов за текущий месяц
+     */
+    public double getTotalExpense() {
+        return 1800.0;
     }
 }

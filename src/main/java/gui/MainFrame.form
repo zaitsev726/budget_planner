@@ -21,12 +21,6 @@
         </properties>
         <border type="none"/>
         <children>
-          <component id="3f8b8" class="gui.PieChart" binding="pieChart1" custom-create="true" default-binding="true">
-            <constraints>
-              <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
           <grid id="cc105" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
@@ -247,6 +241,15 @@
               </grid>
             </children>
           </grid>
+          <grid id="7fc17" binding="trapPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
         </children>
       </grid>
       <grid id="9352a" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -346,7 +349,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="f3298" class="javax.swing.JLabel">
+              <component id="f3298" class="javax.swing.JLabel" binding="expenseLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -369,7 +372,7 @@
                     </properties>
                     <border type="none"/>
                     <children>
-                      <grid id="34ab" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="34ab" binding="totalExpenseTemplatePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -381,7 +384,7 @@
                         </properties>
                         <border type="none"/>
                         <children>
-                          <component id="f02ef" class="javax.swing.JLabel">
+                          <component id="f02ef" class="javax.swing.JLabel" binding="expenseSumLabel">
                             <constraints>
                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="4" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
@@ -391,7 +394,7 @@
                               <text value="-1800,00"/>
                             </properties>
                           </component>
-                          <component id="70c73" class="javax.swing.JLabel">
+                          <component id="70c73" class="javax.swing.JLabel" binding="expenseDateLabel">
                             <constraints>
                               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
