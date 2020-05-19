@@ -1,9 +1,12 @@
 package controller;
 
 import entities.Expense;
+import entities.Income;
 import service.BudgetPlannerService;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.*;
 
@@ -11,6 +14,8 @@ public class GuiController {
     private BudgetPlannerService service;
     private CategoryController categoryController;
     private final Random rand = new Random();
+    private Month currentMonth;
+    private int currentYear;
     //test
     private List<Expense> testList;
     List<String> categoryList;
@@ -19,6 +24,9 @@ public class GuiController {
     public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
         service = budgetPlannerService;
         this.categoryController = categoryController;
+        LocalDate currentDate = LocalDate.now();
+        currentMonth = currentDate.getMonth();
+        currentYear = currentDate.getYear();
         //test
         categoryList = new ArrayList<>();
         categoryList.add("Продукты");
@@ -119,5 +127,35 @@ public class GuiController {
      */
     public void addNewCategory(String categoryName) {
         categoryList.add(categoryName);
+    }
+
+    /**
+     * @return список доходов
+     */
+    public List<Income> getIncomeList() {
+        return new ArrayList<>();
+    }
+
+    /**
+     * @return сумму всех
+     */
+    public float getTotalIncome() {
+        return 5000.0f;
+    }
+
+    public String getCurrentMonth() {
+        return currentMonth.toString() + " " + currentYear;
+    }
+
+    public void setPreviousMonth() {
+        currentMonth = currentMonth.minus(1L);
+        if (currentMonth.equals(Month.DECEMBER))
+            currentYear -= 1;
+    }
+
+    public void setNextMonth() {
+        currentMonth = currentMonth.plus(1L);
+        if (currentMonth.equals(Month.JANUARY))
+            currentYear += 1;
     }
 }
