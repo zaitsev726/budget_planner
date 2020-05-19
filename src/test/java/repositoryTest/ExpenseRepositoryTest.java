@@ -17,9 +17,7 @@ import static org.junit.Assert.assertNull;
 
 public class ExpenseRepositoryTest {
     private ExpenseRepository expenseRepository;
-    private Date first;
     private Expense expense1;
-    private Date second;
     private Expense expense2;
     private Expense expense3;
 
@@ -38,13 +36,13 @@ public class ExpenseRepositoryTest {
         expense1 = new Expense();
         expense1.setIdCategory(category.getIdCategory());
         expense1.setSum(100);
-        first = new Date();
+        Date first = new Date();
         expense1.setDate(first);
 
         expense2 = new Expense();
         expense2.setIdCategory(category.getIdCategory());
         expense2.setSum(1032.23);
-        second = new Date();
+        Date second = new Date();
         expense2.setDate(second);
 
         expenseRepository.saveExpense(expense1);
@@ -68,7 +66,7 @@ public class ExpenseRepositoryTest {
 
     @Test
     public void updatingExpense(){
-        Expense expense = expenseRepository.findByIdExpense((long) 1);
+        Expense expense = expenseRepository.findByIdExpense(expense2.getIdExpense());
         expense.setSum(expense.getSum() + 102.32);
         expense = expenseRepository.updateExpense(expense);
 
@@ -78,8 +76,7 @@ public class ExpenseRepositoryTest {
     @Test
     public void deletingExpense(){
         Expense expense = null;
-        long id = 0;
-        id = expense1.getIdExpense();
+        long id = expense1.getIdExpense();
         expenseRepository.deleteExpense(id);
         try{
             expense = expenseRepository.findByIdExpense(id);
