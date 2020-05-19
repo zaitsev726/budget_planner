@@ -198,4 +198,15 @@ public class GuiController {
         expense.setDate(new Date());
         testList.add(expense);
     }
+
+    /**
+     * Добавляется новый доход (дата - текущий день)
+     * @param sum сумма дохода
+     */
+    public void addNewIncome(float sum) {
+        Income income = new Income();
+        income.setSum(sum);
+        income.setDate(new Date());
+        testIncomeList.add(income);
+    }
 }
