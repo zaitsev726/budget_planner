@@ -32,6 +32,7 @@ public class MainFrame extends JFrame {
     public static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     private GuiController controller;
+    private List<Color> colorList;
 
     public MainFrame(GuiController guiController) {
         controller = guiController;
@@ -51,7 +52,6 @@ public class MainFrame extends JFrame {
 
     private void fillCategoryListPanel() {
         int size = controller.getCategoryList().size();
-        List<Color> colorList = controller.getColorList(size);
         int i = 0;
         categoryListPanel.removeAll();
         categoryListPanel.setLayout(new GridLayoutManager(size, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -72,9 +72,7 @@ public class MainFrame extends JFrame {
             button1.setBorderPainted(false);
             button1.setContentAreaFilled(false);
             panel3.add(button1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, new Dimension(40, 20), 0, false));
-            button1.addActionListener(e -> {
-                activateMorePanel(category);
-            });
+            button1.addActionListener(e -> activateMorePanel(category));
         }
         validate();
         repaint();
@@ -161,7 +159,7 @@ public class MainFrame extends JFrame {
     private void createUIComponents() {
         int size = controller.getCategoryList().size();
         List<Double> values = controller.getCategoryValuesList();
-        List<Color> colorList = controller.getColorList(size);
+        colorList = controller.getColorList(size);
         if (values.isEmpty())
             pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
         else
@@ -169,9 +167,9 @@ public class MainFrame extends JFrame {
         pieChart1.setPreferredSize(new Dimension(150, 150));
     }
 
-    private class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
-        private String datePattern = "yyyy-MM-dd";
-        private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+    private static class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
+        private static final String DATE_PATTERN = "yyyy-MM-dd";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 
         @Override
         public Object stringToValue(String text) throws ParseException {
