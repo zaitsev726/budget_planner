@@ -188,11 +188,14 @@ public class GuiController {
     }
 
     /**
-     *
-     * @param categoryName
-     * @param sum
+     * Добавляется новый расход по категории (дата - текущий день)
+     * @param categoryName название категории
+     * @param sum сумма расхода
      */
     public void addNewExpenseByCategory(String categoryName, double sum) {
-
+        Expense expense = new Expense();
+        expense.setSum(sum);
+        expense.setDate(new Date());
+        testList.add(expense);
     }
 }
