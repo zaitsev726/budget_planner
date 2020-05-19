@@ -59,6 +59,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame(GuiController guiController) {
         controller = guiController;
+        createUIComponents();
         setTitle("Budget planner");
         setLocation(
                 (SCREEN_WIDTH - totalPanel.getPreferredSize().width) / 2,
@@ -381,21 +382,25 @@ public class MainFrame extends JFrame {
         return i;
     }
 
+    private void createUIComponents() {
+        if (controller == null)
+            pieChart1 = new PieChart(0);
+        else generateColorsValuesAndPieChart();
+    }
+
     //TODO: нужно в pieChart1 разобраться со случаем, когда в категории еще нет никаких расходов
     private void generateColorsValuesAndPieChart() {
         int size = controller.getCategoryList().size();
         List<Double> values = controller.getCategoryValuesList();
         colorList = controller.getColorList(size);
-        if (values.isEmpty()) {
+        if (values.isEmpty())
             pieChart1 = new PieChart(new ArrayList<>(Collections.singleton(100.0)), new ArrayList<>(Collections.singleton(new Color(140, 140, 140))));
-        }
-        else {
+        else
             pieChart1 = new PieChart(values, colorList);
-        }
         pieChart1.setPreferredSize(new Dimension(150, 150));
-        panel1.remove(trapPanel);
-        panel1.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.add(pieChart1, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        trapPanel = new JPanel();
+        trapPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        trapPanel.add(pieChart1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         validate();
         repaint();
     }
