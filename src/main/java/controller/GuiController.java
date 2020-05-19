@@ -13,26 +13,34 @@ public class GuiController {
     private final Random rand = new Random();
     //test
     private List<Expense> testList;
+    List<String> categoryList;
 
     //
     public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
         service = budgetPlannerService;
         this.categoryController = categoryController;
         //test
+        categoryList = new ArrayList<>();
+        categoryList.add("Продукты");
+        categoryList.add("Транспорт");
+        categoryList.add("Здоровье");
+        categoryList.add("Рестораны");
+
         testList = new ArrayList<>();
         Expense e = new Expense();
         e.setSum(1800.0);
-        e.setDate(new GregorianCalendar(2020, GregorianCalendar.FEBRUARY, 22).getTime());
+        e.setDate(new GregorianCalendar(2020, Calendar.FEBRUARY, 22).getTime());
         testList.add(e);
         Expense e2 = new Expense();
         e2.setSum(200.0);
-        e2.setDate(new GregorianCalendar(2020, GregorianCalendar.MAY, 15).getTime());
+        e2.setDate(new GregorianCalendar(2020, Calendar.MAY, 15).getTime());
         testList.add(e2);
         //
     }
 
     /**
      * Создает список рандомных неповторяющихся цветов
+     *
      * @param size размер списка
      * @return список Color'ов
      */
@@ -56,11 +64,6 @@ public class GuiController {
      * @return список, состоящий из названий категорий
      */
     public List<String> getCategoryList() {
-        List<String> categoryList = new ArrayList<>();
-        categoryList.add("Продукты");
-        categoryList.add("Транспорт");
-        categoryList.add("Здоровье");
-        categoryList.add("Рестораны");
         return categoryList;
     }
 
@@ -107,5 +110,14 @@ public class GuiController {
         Expense updated = testList.get(index);
         updated.setDate(date);
         updated.setSum(sum);
+    }
+
+    /**
+     * Добавление новой категории
+     *
+     * @param categoryName название категории
+     */
+    public void addNewCategory(String categoryName) {
+        categoryList.add(categoryName);
     }
 }
