@@ -16,9 +16,14 @@ public class ExpenseRepository {
     public void saveExpense(Expense expense){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        Category category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
-                .setParameter("id", expense.getIdCategory())
-                .getSingleResult();
+        Category category;
+        try{
+            category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
+                    .setParameter("id", expense.getIdCategory())
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return;
+        }
         expense.setCategoryExpense(category);
         em.persist(expense);
 

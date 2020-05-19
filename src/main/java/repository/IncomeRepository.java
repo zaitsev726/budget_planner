@@ -1,8 +1,10 @@
 package repository;
 
+import entities.Category;
 import entities.Income;
 
 import javax.persistence.*;
+import java.util.List;
 
 public class IncomeRepository {
     EntityManagerFactory emf;
@@ -12,10 +14,22 @@ public class IncomeRepository {
     }
 
     public void saveIncome(Income income){
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        em.persist(income);
-        em.getTransaction().commit();
+
+            EntityManager em = emf.createEntityManager();
+            em.getTransaction().begin();
+            Category category = null;
+            try {
+                category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
+                        .setParameter("id", income.getIdCategory())
+                        .getSingleResult();
+            }catch (NoResultException e){
+                return;
+            }
+            income.setCategoryIncome(category);
+            em.persist(income);
+            em.merge(category);
+
+            em.getTransaction().commit();
     }
 
     public void deleteIncome(long id_income){
@@ -46,4 +60,19 @@ public class IncomeRepository {
         }
         return income;
     }
+
+    public List<Income> findCategoryIncomes(long id_category){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select i from Income i where i.idCategory = :id", Income.class)
+                .setParameter("id", id_category)
+                .getResultList();
+    }
+
+    public Income findByIdIncome(Long id_income){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select i from Income i where i.idIncome = :id", Income.class)
+                .setParameter("id", id_income)
+                .getSingleResult();
+    }
+
 }

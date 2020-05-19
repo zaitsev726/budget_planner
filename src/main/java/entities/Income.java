@@ -21,6 +21,21 @@ public class Income {
     @ManyToOne(cascade = CascadeType.ALL)
     private Category categoryIncome;
 
+
+    public void setCategoryIncome(Category categoryIncome) {
+        setCategoryIncome(categoryIncome,true);
+    }
+
+    void setCategoryIncome(Category category, boolean add){
+        this.categoryIncome = category;
+        if(category!= null && add){
+            category.addIncome(this,false);
+        }
+    }
+    public Category getCategoryIncome() {
+        return categoryIncome;
+    }
+
     public Income(){}
 
     public Long getIdIncome() { return idIncome; }
