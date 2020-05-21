@@ -5,10 +5,9 @@ import entities.Expense;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class CategoryTest {
     private Category category;
@@ -25,6 +24,7 @@ public class CategoryTest {
         date = new Date();
         expense.setDate(date);
         expense.setIdExpense((long) 2);
+        expense.setIdCategory((long) 2);
 
         category.addExpense(expense);
     }
@@ -41,9 +41,44 @@ public class CategoryTest {
         assertEquals(expense.getDate(), date);
         assertEquals(expense.getIdExpense().longValue(),2);
         assertEquals(expense.getCategoryExpense(), category);
+    }
 
-        category.setExpenses(new ArrayList<>());
 
+    @Test
+    public void addingRepetitiveExpense(){
+        Expense expense = new Expense();
+        expense.setSum(1238.233);
+        date = new Date();
+        expense.setDate(date);
+        expense.setIdExpense((long) 2);
+        expense.setIdCategory((long) 2);
+
+        category.addExpense(expense);
+        category.addExpense(expense);
+
+        assertEquals(category.getExpenses().size(), 1);
+    }
+
+    @Test
+    public void removingExpense(){
+        Expense expense = category.getExpenses().get(0);
+        category.removeExpense(expense);
         assertEquals(category.getExpenses().size(), 0);
+        assertNull(expense.getCategoryExpense());
+
+        category.addExpense(expense);
+        assertEquals(category.getExpenses().size(), 1);
+        assertNotNull(expense.getCategoryExpense());
+
+    }
+
+    @Test
+    public void stringTest(){
+        assertEquals(category.toString(), "Category{" +
+                "idCategory=" + category.getIdCategory() +
+                ", currentSum=" + category.getCurrentSum() +
+                ", categoryName='" + category.getCategoryName() + '\'' +
+                ", expenses=" + category.getExpenses() +
+                '}');
     }
 }
