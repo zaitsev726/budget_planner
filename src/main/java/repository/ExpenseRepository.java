@@ -9,19 +9,19 @@ import java.util.List;
 public class ExpenseRepository {
     EntityManagerFactory emf;
 
-    public ExpenseRepository(){
+    public ExpenseRepository() {
         emf = Persistence.createEntityManagerFactory("model");
     }
 
-    public void saveExpense(Expense expense){
+    public void saveExpense(Expense expense) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         Category category;
-        try{
+        try {
             category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
                     .setParameter("id", expense.getIdCategory())
                     .getSingleResult();
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return;
         }
         expense.setCategoryExpense(category);
@@ -31,43 +31,38 @@ public class ExpenseRepository {
         em.getTransaction().commit();
     }
 
-    public void deleteExpense(long id_expense){
+    public void deleteExpense(long id_expense) {
         EntityManager em = emf.createEntityManager();
-        try{
-            em.getTransaction().begin();
-            Query query = em.createQuery("delete from Expense e where e.idExpense= :id");
-            query.setParameter("id", id_expense);
-            query.executeUpdate();
-            em.getTransaction().commit();
-            em.close();
-        }catch (RollbackException e){
-            e.printStackTrace();
-            em.getTransaction().rollback();
-        }
+        em.getTransaction().begin();
+        Query query = em.createQuery("delete from Expense e where e.idExpense= :id");
+        query.setParameter("id", id_expense);
+        query.executeUpdate();
+        em.getTransaction().commit();
+        em.close();
     }
 
-    public Expense updateExpense(Expense expense){
+    public Expense updateExpense(Expense expense) {
         EntityManager em = emf.createEntityManager();
-        try{
+        try {
             em.getTransaction().begin();
             expense = em.merge(expense);
             em.getTransaction().commit();
             em.close();
-        }catch (RollbackException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             em.getTransaction().rollback();
         }
         return expense;
     }
 
-    public List<Expense> findCategoryExpenses(long id_category){
+    public List<Expense> findCategoryExpenses(long id_category) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select e from Expense e where e.idCategory = :id", Expense.class)
                 .setParameter("id", id_category)
                 .getResultList();
     }
 
-    public Expense findByIdExpense(Long id_expense){
+    public Expense findByIdExpense(Long id_expense) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select e from Expense e where e.idExpense = :id", Expense.class)
                 .setParameter("id", id_expense)

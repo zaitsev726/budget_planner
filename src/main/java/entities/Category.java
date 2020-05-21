@@ -3,6 +3,7 @@ package entities;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Category {
@@ -58,4 +59,25 @@ public class Category {
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Double.compare(category.currentSum, currentSum) == 0 &&
+                Objects.equals(idCategory, category.idCategory) &&
+                Objects.equals(categoryName, category.categoryName) &&
+                Objects.equals(expenses, category.expenses);
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "idCategory=" + idCategory +
+                ", currentSum=" + currentSum +
+                ", categoryName='" + categoryName + '\'' +
+                ", expenses=" + expenses +
+                '}';
+    }
 }
