@@ -17,7 +17,6 @@ public class IncomeTest {
     public void setIncome(){
         income = new Income();
         income.setIdIncome((long) 5);
-        income.setIdCategory((long) 2);
         income.setSum(300);
         date = new Date();
         income.setDate(date);
@@ -26,7 +25,6 @@ public class IncomeTest {
     @Test
     public void testIncomeParameters(){
         assertEquals(5L, (long) income.getIdIncome());
-        assertEquals(2L, (long) income.getIdCategory());
         assertEquals(300.0, income.getSum(), 1e-15);
         assertEquals(income.getDate(), date);
     }
@@ -35,7 +33,6 @@ public class IncomeTest {
     public void equalsTest(){
         Income income = new Income();
         income.setIdIncome((long) 5);
-        income.setIdCategory((long) 2);
         income.setSum(300);
         income.setDate(date);
 
@@ -46,7 +43,6 @@ public class IncomeTest {
     public void stringTest(){
         assertEquals(income.toString(), "Income{" +
                 "idIncome=" + income.getIdIncome() +
-                ", idCategory=" + income.getIdCategory() +
                 ", sum=" + income.getSum() +
                 ", date=" + income.getDate() +
                 '}');

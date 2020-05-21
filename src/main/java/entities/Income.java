@@ -11,9 +11,6 @@ public class Income {
     private Long idIncome;
 
     @Column
-    private Long idCategory;
-
-    @Column
     private double sum;
 
     @Column
@@ -24,10 +21,6 @@ public class Income {
     public Long getIdIncome() { return idIncome; }
 
     public void setIdIncome(Long idIncome) { this.idIncome = idIncome; }
-
-    public Long getIdCategory() { return idCategory; }
-
-    public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
 
     public double getSum() { return sum; }
 
@@ -44,7 +37,6 @@ public class Income {
         Income income = (Income) o;
         return Double.compare(income.sum, sum) == 0 &&
                 Objects.equals(idIncome, income.idIncome) &&
-                Objects.equals(idCategory, income.idCategory) &&
                 Objects.equals(date, income.date);
     }
 
@@ -52,7 +44,6 @@ public class Income {
     public String toString() {
         return "Income{" +
                 "idIncome=" + idIncome +
-                ", idCategory=" + idCategory +
                 ", sum=" + sum +
                 ", date=" + date +
                 '}';

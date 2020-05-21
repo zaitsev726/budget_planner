@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 public class IncomeRepositoryTest {
     private IncomeRepository incomeRepository;
     private Income income1;
+    private Income income2;
     private Income income3;
     private Date date1;
     private Date date2;
@@ -30,7 +31,7 @@ public class IncomeRepositoryTest {
         date1 = new Date();
         income1.setDate(date1);
 
-        Income income2 = new Income();
+        income2 = new Income();
         income2.setSum(9398.72);
         date2 = new Date();
         income2.setDate(date2);
@@ -55,9 +56,9 @@ public class IncomeRepositoryTest {
 
     @Test
     public void updatingExpense(){
-        income3.setSum(1224);
-        income3 = incomeRepository.updateIncome(income3);
-        assertEquals(income3.getSum(), 1224, 0.01);
+        income2.setSum(1224);
+        income2 = incomeRepository.updateIncome(income2);
+        assertEquals(income2.getSum(), 1224, 0.01);
     }
 
     @Test
@@ -70,6 +71,22 @@ public class IncomeRepositoryTest {
         Income income = null;
         long id = incomeRepository.findByDate(date1).get(0).getIdIncome();
         incomeRepository.deleteIncomeByDate(date1);
+        try{
+            income = incomeRepository.findByIdIncome(id);
+        }catch (NoResultException ignored){
+            assertNull(income);
+        }
+
+
+        income = new Income();
+        income.setSum(1569.1);
+        Date newDate = new Date();
+        income.setDate(newDate);
+        incomeRepository.saveIncome(income);
+
+        income = null;
+        id = incomeRepository.findByDate(newDate).get(0).getIdIncome();
+        incomeRepository.deleteIncome(id);
         try{
             income = incomeRepository.findByIdIncome(id);
         }catch (NoResultException ignored){
