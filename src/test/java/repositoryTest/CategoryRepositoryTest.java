@@ -64,6 +64,10 @@ public class CategoryRepositoryTest {
 
         assertNotNull(categoryRepository.findByIdCategory(category.getIdCategory()));
         assertEquals(302.134, category.getCurrentSum(), 0.01);
+
+        category = null;
+        category = categoryRepository.updateCategory(category);
+        assertNull(category);
     }
 
     @Test
@@ -86,6 +90,8 @@ public class CategoryRepositoryTest {
         } catch (NoResultException ignored) {
             assertNull(category);
         }
+
+        categoryRepository.deleteCategory(null);
 
     }
 

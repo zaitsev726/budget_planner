@@ -26,30 +26,31 @@ public class CategoryRepository {
         query.executeUpdate();
         em.getTransaction().commit();
         em.close();
+
     }
 
     public void deleteCategory(String categoryName) {
         EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            Query query = em.createQuery("delete from Category c where c.categoryName= :name");
-            query.setParameter("name", categoryName);
-            query.executeUpdate();
-            em.getTransaction().commit();
-            em.close();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-            em.getTransaction().rollback();
-        }
+        em.getTransaction().begin();
+        Query query = em.createQuery("delete from Category c where c.categoryName= :name");
+        query.setParameter("name", categoryName);
+        query.executeUpdate();
+        em.getTransaction().commit();
+        em.close();
     }
 
     public Category updateCategory(Category category) {
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        category = em.merge(category);
-        em.getTransaction().commit();
-        em.close();
-
+        try {
+            em.getTransaction().begin();
+            category = em.merge(category);
+            em.getTransaction().commit();
+            em.close();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+            return null;
+        }
         return category;
     }
 
