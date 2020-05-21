@@ -51,6 +51,8 @@ public class Expense {
 
     public void setDate(Date date) { this.date = date; }
 
+    public void setIdExpense(Long idExpense) { this.idExpense = idExpense; }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this)

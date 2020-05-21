@@ -44,10 +44,6 @@ public class CategoryRepositoryTest {
         Category category = categoryRepository.findByNameCategory("Категория4");
         assertEquals("Категория4", category.getCategoryName());
         assertEquals(1000.02, category.getCurrentSum(), 0.01);
-
-        category = categoryRepository.findByIdCategory(category.getIdCategory() - 1);
-        assertEquals("Категория3", category.getCategoryName());
-        assertEquals(200.96, category.getCurrentSum(), 0.01);
     }
 
     @Test
@@ -68,6 +64,10 @@ public class CategoryRepositoryTest {
 
         assertNotNull(categoryRepository.findByIdCategory(category.getIdCategory()));
         assertEquals(302.134, category.getCurrentSum(), 0.01);
+
+        category = null;
+        category = categoryRepository.updateCategory(category);
+        assertNull(category);
     }
 
     @Test
@@ -79,6 +79,20 @@ public class CategoryRepositoryTest {
         } catch (NoResultException ignored) {
             assertNull(category);
         }
+
+
+
+        category = null;
+        categoryRepository.deleteCategory(categoryRepository.findByNameCategory("Категория3").getIdCategory());
+
+        try {
+            category = categoryRepository.findByNameCategory("Категория1");
+        } catch (NoResultException ignored) {
+            assertNull(category);
+        }
+
+        categoryRepository.deleteCategory(null);
+
     }
 
     @After
