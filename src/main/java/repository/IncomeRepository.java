@@ -14,42 +14,30 @@ public class IncomeRepository {
     }
 
     public void saveIncome(Income income) {
-
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(income);
-
         em.getTransaction().commit();
     }
 
     public void deleteIncome(long id_income) {
         EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            Query query = em.createQuery("delete from Income i where i.idIncome= :id");
-            query.setParameter("id", id_income);
-            query.executeUpdate();
-            em.getTransaction().commit();
-            em.close();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-            em.getTransaction().rollback();
-        }
+        em.getTransaction().begin();
+        Query query = em.createQuery("delete from Income i where i.idIncome= :id");
+        query.setParameter("id", id_income);
+        query.executeUpdate();
+        em.getTransaction().commit();
+        em.close();
     }
 
     public void deleteIncomeByDate(Date date) {
         EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            Query query = em.createQuery("delete from Income i where i.date = :date");
-            query.setParameter("date", date);
-            query.executeUpdate();
-            em.getTransaction().commit();
-            em.close();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-            em.getTransaction().rollback();
-        }
+        em.getTransaction().begin();
+        Query query = em.createQuery("delete from Income i where i.date = :date");
+        query.setParameter("date", date);
+        query.executeUpdate();
+        em.getTransaction().commit();
+        em.close();
     }
 
     public Income updateIncome(Income income) {
@@ -59,9 +47,10 @@ public class IncomeRepository {
             income = em.merge(income);
             em.getTransaction().commit();
             em.close();
-        } catch (RollbackException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             em.getTransaction().rollback();
+            return null;
         }
         return income;
     }
@@ -73,7 +62,7 @@ public class IncomeRepository {
                 .getSingleResult();
     }
 
-    public List<Income> findByDate(Date date){
+    public List<Income> findByDate(Date date) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select i from Income i where i.date = :date", Income.class)
                 .setParameter("date", date)
