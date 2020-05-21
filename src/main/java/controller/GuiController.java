@@ -125,7 +125,7 @@ public class GuiController {
     }
 
     /**
-     * Изменение значения конкретного расхода по категории в текущем месяце
+     * Iзменение значения конкретного расхода по категории в текущем месяце
      *
      * @param expense изменяемый расход
      * @param sum     новое значение суммы
@@ -139,7 +139,7 @@ public class GuiController {
     }
 
     /**
-     * Изменение значения конкретного дохода в текущем месяце
+     * Iзменение значения конкретного дохода в текущем месяце
      *
      * @param income изменяемый доход
      * @param sum    новое значение суммы
@@ -230,7 +230,7 @@ public class GuiController {
      */
     @NotNull
     public List<Expense> getExpenseList() {
-        return new ArrayList<>();
+        return testList;
     }
 
     /**

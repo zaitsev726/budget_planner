@@ -42,12 +42,12 @@ public class CategoryRepositoryTest {
     @Test
     public void findingTest() {
         Category category = categoryRepository.findByNameCategory("Категория4");
-        assertEquals(category.getCategoryName(), "Категория4");
-        assertEquals(category.getCurrentSum(), 1000.02, 0.01);
+        assertEquals("Категория4", category.getCategoryName());
+        assertEquals(1000.02, category.getCurrentSum(), 0.01);
 
         category = categoryRepository.findByIdCategory(category.getIdCategory() - 1);
-        assertEquals(category.getCategoryName(), "Категория3");
-        assertEquals(category.getCurrentSum(), 200.96, 0.01);
+        assertEquals("Категория3", category.getCategoryName());
+        assertEquals(200.96, category.getCurrentSum(), 0.01);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class CategoryRepositoryTest {
         category = categoryRepository.updateCategory(category);
 
         assertNotNull(categoryRepository.findByIdCategory(category.getIdCategory()));
-        assertEquals(category.getCurrentSum(), 302.134, 0.01);
+        assertEquals(302.134, category.getCurrentSum(), 0.01);
     }
 
     @Test

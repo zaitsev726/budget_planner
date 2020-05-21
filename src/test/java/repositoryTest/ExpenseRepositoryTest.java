@@ -18,7 +18,7 @@ public class ExpenseRepositoryTest {
     private Expense expense2;
 
     @Before
-    public void createExpenses(){
+    public void createExpenses() {
         expenseRepository = new ExpenseRepository();
 
         Category category = new Category();
@@ -30,7 +30,7 @@ public class ExpenseRepositoryTest {
         category = categoryRepository.findByNameCategory("Категория1");
 
 
-       // System.out.println("*****************" + category.getIdCategory());
+        // System.out.println("*****************" + category.getIdCategory());
         expense1 = new Expense();
         expense1.setIdCategory(category.getIdCategory());
         expense1.setSum(100);
@@ -48,19 +48,20 @@ public class ExpenseRepositoryTest {
     }
 
     @Test
-    public void savingExpense(){
-        expenseRepository.saveExpense(expense1);
-        expenseRepository.saveExpense(expense2);
-      //  List<Expense> expenseList = expenseRepository.findCategoryExpenses(expense1.getIdCategory());
-
+    public void savingExpense() {
+        //  expenseRepository.saveExpense(expense1);
+        //  expenseRepository.saveExpense(expense2);
+        //  List<Expense> expenseList = expenseRepository.findCategoryExpenses(expense1.getIdCategory());
 
 
     }
 
     @After
-    public void deleteExpenses(){
-        CategoryRepository categoryRepository = new CategoryRepository();
-        categoryRepository.deleteCategory("Категория1");
+    public void deleteExpenses() {
+      /*  CategoryRepository categoryRepository = new CategoryRepository();
+        expenseRepository.deleteExpense(expense1.getIdExpense());
+        expenseRepository.deleteExpense(expense2.getIdExpense());
+        categoryRepository.deleteCategory("Категория1");*/
     }
 
 }

@@ -25,9 +25,9 @@ public class IncomeTest {
 
     @Test
     public void testIncomeParameters(){
-        assertEquals((long) income.getIdIncome(), 5);
-        assertEquals((long) income.getIdCategory(), 2);
-        assertEquals(income.getSum(), 300);
+        assertEquals(5L, (long) income.getIdIncome());
+        assertEquals(2L, (long) income.getIdCategory());
+        assertEquals(300.0, income.getSum(), 1e-15);
         assertEquals(income.getDate(), date);
     }
 }

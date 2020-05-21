@@ -49,7 +49,6 @@ public class MainFrame extends JFrame {
     private JLabel expenseSumLabel;
     private JLabel expenseDateLabel;
     private JPanel trap;
-    private JButton бButton;
     private static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     private static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     private static final String FORMAT_PATTERN = "dd-MMM-yyyy";
@@ -72,6 +71,7 @@ public class MainFrame extends JFrame {
         setVisible(true);
         fillCategoryListPanel();
         fillIncomeListPanel();
+        fillExpenseListPanel();
         button2.addActionListener(e -> {
             if (textField1.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Введите название новой категории");
@@ -168,6 +168,7 @@ public class MainFrame extends JFrame {
             controller.addNewExpenseByCategory(categoryLabel.getText(), sum);
             addExpenseField.setText("");
             activateMorePanel(categoryName);
+            fillExpenseListPanel();
         });
     }
 
@@ -220,6 +221,8 @@ public class MainFrame extends JFrame {
         expenseTemplatePanel.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), null, 0, false));
         validate();
         repaint();
+        if (saveButton.getActionListeners().length > 0)
+            saveButton.removeActionListener(saveButton.getActionListeners()[0]);
         saveButton.addActionListener(r -> {
             try {
                 Double.parseDouble(textField.getText());
@@ -233,6 +236,7 @@ public class MainFrame extends JFrame {
             }
             controller.setNewCategoryExpense(expense, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
             activateMorePanel(categoryName);
+            fillExpenseListPanel();
         });
     }
 
@@ -347,7 +351,7 @@ public class MainFrame extends JFrame {
         expenseLabel.setText("Расходы (" + totalExpense + ")");
         expenseListPanel.removeAll();
         if (expenseList.isEmpty()) return;
-        expenseListPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        expenseListPanel.setLayout(new GridLayoutManager(expenseList.size() + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
         expenseListPanel.setBackground(new Color(-1));
         int i = 0;
         for (Expense expense : expenseList) {
