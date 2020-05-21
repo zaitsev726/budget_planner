@@ -47,7 +47,7 @@ public class Category {
 
     public Category(){}
 
-    public Long getIdCategory() { return idCategory; }
+    public long getIdCategory() { return idCategory; }
 
     public double getCurrentSum() { return currentSum; }
 
@@ -56,4 +56,6 @@ public class Category {
     public String getCategoryName() { return categoryName; }
 
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+
+    public void setIdCategory(Long idCategory) { this.idCategory = idCategory; }
 }
