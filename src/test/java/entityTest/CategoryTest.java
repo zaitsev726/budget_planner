@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class CategoryTest {
     private Category category;
@@ -20,7 +19,6 @@ public class CategoryTest {
     @Test
     public void testCategoryParameters() {
         assertEquals("RandomName", category.getCategoryName());
-        assertNull(category.getIdCategory());
         assertEquals(100.0, category.getCurrentSum(), 1e-15);
     }
 }

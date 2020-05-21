@@ -16,9 +16,14 @@ public class ExpenseRepository {
     public void saveExpense(Expense expense){
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        Category category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
-                .setParameter("id", expense.getIdCategory())
-                .getSingleResult();
+        Category category;
+        try{
+            category = em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
+                    .setParameter("id", expense.getIdCategory())
+                    .getSingleResult();
+        }catch (NoResultException e){
+            return;
+        }
         expense.setCategoryExpense(category);
         em.persist(expense);
 
@@ -60,5 +65,12 @@ public class ExpenseRepository {
         return em.createQuery("select e from Expense e where e.idCategory = :id", Expense.class)
                 .setParameter("id", id_category)
                 .getResultList();
+    }
+
+    public Expense findByIdExpense(Long id_expense){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select e from Expense e where e.idExpense = :id", Expense.class)
+                .setParameter("id", id_expense)
+                .getSingleResult();
     }
 }

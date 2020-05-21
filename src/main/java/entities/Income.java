@@ -18,9 +18,6 @@ public class Income {
     @Column
     private Date date;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Category categoryIncome;
-
     public Income(){}
 
     public Long getIdIncome() { return idIncome; }

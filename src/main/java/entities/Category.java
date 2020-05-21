@@ -2,7 +2,6 @@ package entities;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -45,8 +44,6 @@ public class Category {
         getExpenses().remove(expense);
         expense.setCategoryExpense(null);
     }
-    @OneToMany(mappedBy = "categoryIncome", fetch = FetchType.LAZY)
-    private Collection<Income> incomes;
 
     public Category(){}
 
