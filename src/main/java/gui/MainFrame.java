@@ -63,7 +63,6 @@ public class MainFrame extends JFrame {
                 (SCREEN_WIDTH - totalPanel.getPreferredSize().width) / 2,
                 (SCREEN_HEIGHT - totalPanel.getPreferredSize().height) / 2
         );
-
         setContentPane(totalPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         monthLabel.setText(controller.getCurrentMonth());
@@ -120,12 +119,14 @@ public class MainFrame extends JFrame {
             final JLabel label1 = new JLabel();
             label1.setText(category);
             panel3.add(label1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-            moreButton = new JButton(new ImageIcon(getClass().getResource("/more.png")));
+            JButton moreButton = new JButton(new ImageIcon(getClass().getResource("/more.png")));
             moreButton.setBackground(new Color(-1));
             moreButton.setBorderPainted(false);
             moreButton.setFocusPainted(false);
             moreButton.setContentAreaFilled(false);
             panel3.add(moreButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, new Dimension(40, 20), 0, false));
+            if (moreButton.getActionListeners().length > 0)
+                moreButton.removeActionListener(moreButton.getActionListeners()[0]);
             moreButton.addActionListener(e -> activateMorePanel(category));
         }
         validate();
@@ -153,6 +154,8 @@ public class MainFrame extends JFrame {
     private void addingNewExpenseProperty(String categoryName) {
         addNewExpenseButton.setBackground(new Color(-1));
         addNewExpenseButton.setText("+");
+        if (addNewExpenseButton.getActionListeners().length > 0)
+            addNewExpenseButton.removeActionListener(addNewExpenseButton.getActionListeners()[0]);
         addNewExpenseButton.addActionListener(e -> {
             if (addExpenseField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Введите сумму");
@@ -189,7 +192,7 @@ public class MainFrame extends JFrame {
         SimpleDateFormat formattedDate = new SimpleDateFormat(FORMAT_PATTERN);
         label2.setText(formattedDate.format(expense.getDate()));
         expenseTemplatePanel.add(label2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
+        JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
         editButton.setBorderPainted(false);
         editButton.setContentAreaFilled(false);
         editButton.setFocusPainted(true);
@@ -199,6 +202,8 @@ public class MainFrame extends JFrame {
         editButton.setSelected(false);
         editButton.setText("");
         expenseTemplatePanel.add(editButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
+        if (editButton.getActionListeners().length > 0)
+            editButton.removeActionListener(editButton.getActionListeners()[0]);
         editButton.addActionListener(e -> repaintExpenseTemplateForEditting(categoryName, expense, expenseTemplatePanel));
         return i;
     }
@@ -221,23 +226,7 @@ public class MainFrame extends JFrame {
         expenseTemplatePanel.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), null, 0, false));
         validate();
         repaint();
-        if (saveButton.getActionListeners().length > 0)
-            saveButton.removeActionListener(saveButton.getActionListeners()[0]);
-        saveButton.addActionListener(r -> {
-            try {
-                Double.parseDouble(textField.getText());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Некорректно введена сумма расхода");
-                return;
-            }
-            if (datePicker.getModel().getValue() == null) {
-                JOptionPane.showMessageDialog(null, "Выберите дату");
-                return;
-            }
-            controller.setNewCategoryExpense(expense, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
-            activateMorePanel(categoryName);
-            fillExpenseListPanel();
-        });
+        initializeSaveButton(categoryName, expense, textField, datePicker, saveButton);
     }
 
     private void fillIncomeListPanel() {
@@ -259,6 +248,8 @@ public class MainFrame extends JFrame {
     }
 
     private void addingNewIncomeProperty() {
+        if (addIncomeButton.getActionListeners().length > 0)
+            addIncomeButton.removeActionListener(addIncomeButton.getActionListeners()[0]);
         addIncomeButton.addActionListener(e -> {
             if (addIncomeField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Введите данные");
@@ -297,6 +288,8 @@ public class MainFrame extends JFrame {
         editIncomeButton.setIconTextGap(0);
         editIncomeButton.setSelected(false);
         editIncomeButton.setText("");
+        if (editIncomeButton.getActionListeners().length > 0)
+            editIncomeButton.removeActionListener(editIncomeButton.getActionListeners()[0]);
         editIncomeButton.addActionListener(e -> repaintIncomeTemplateForEditing(income));
         incomeTemplatePanel.add(editIncomeButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
         final JLabel label2 = new JLabel();
@@ -307,6 +300,33 @@ public class MainFrame extends JFrame {
         label2.setText(formattedDate.format(income.getDate()));
         incomeTemplatePanel.add(label2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         return i;
+    }
+
+    private void initializeSaveButton(String categoryName, Object operation, JTextField textField, JDatePickerImpl datePicker, JButton saveButton) {
+        if (saveButton.getActionListeners().length > 0)
+            saveButton.removeActionListener(saveButton.getActionListeners()[0]);
+        saveButton.addActionListener(r -> {
+            try {
+                Double.parseDouble(textField.getText());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Некорректно введена сумма расхода");
+                return;
+            }
+            if (datePicker.getModel().getValue() == null) {
+                JOptionPane.showMessageDialog(null, "Выберите дату");
+                return;
+            }
+            if (operation instanceof Expense) {
+                Expense expense = (Expense) operation;
+                controller.setNewCategoryExpense(expense, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
+                activateMorePanel(categoryName);
+                fillExpenseListPanel();
+            } else if (operation instanceof Income) {
+                Income income = (Income) operation;
+                controller.setNewIncome(income, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
+                fillIncomeListPanel();
+            }
+        });
     }
 
     private void repaintIncomeTemplateForEditing(Income income) {
@@ -327,6 +347,9 @@ public class MainFrame extends JFrame {
         incomeTemplatePanel.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), null, 0, false));
         validate();
         repaint();
+        initializeSaveButton("", income, textField, datePicker, saveButton);
+        if (saveButton.getActionListeners().length > 0)
+            saveButton.removeActionListener(saveButton.getActionListeners()[0]);
         saveButton.addActionListener(r -> {
             try {
                 Double.parseDouble(textField.getText());
@@ -385,7 +408,7 @@ public class MainFrame extends JFrame {
     }
 
     private void createUIComponents() {
-        if (controller != null)
+        if (controller != null && trap != null)
             generateColorsValuesAndPieChart();
     }
 

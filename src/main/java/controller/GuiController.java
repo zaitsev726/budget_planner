@@ -33,7 +33,7 @@ public class GuiController {
         generateColorList();
         //test
         categoryList = new ArrayList<>();
-        categoryList.add("Продукты");
+        categoryList.add("Продукты");//(new String("Продукты".getBytes(), UTF_8));
         categoryList.add("Транспорт");
         categoryList.add("Здоровье");
         categoryList.add("Рестораны");
