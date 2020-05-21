@@ -30,4 +30,25 @@ public class IncomeTest {
         assertEquals(300.0, income.getSum(), 1e-15);
         assertEquals(income.getDate(), date);
     }
+
+    @Test
+    public void equalsTest(){
+        Income income = new Income();
+        income.setIdIncome((long) 5);
+        income.setIdCategory((long) 2);
+        income.setSum(300);
+        income.setDate(date);
+
+        assertEquals(this.income, income);
+
+    }
+    @Test
+    public void stringTest(){
+        assertEquals(income.toString(), "Income{" +
+                "idIncome=" + income.getIdIncome() +
+                ", idCategory=" + income.getIdCategory() +
+                ", sum=" + income.getSum() +
+                ", date=" + income.getDate() +
+                '}');
+    }
 }
