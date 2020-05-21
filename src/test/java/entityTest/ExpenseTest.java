@@ -15,9 +15,8 @@ public class ExpenseTest {
     @Before
     public void setExpense(){
         expense = new Expense();
-    //    expense.setIdCategory((long) 2);
-     //3
-        //expense.setIdExpense((long) 3);
+        expense.setIdCategory((long) 2);
+        expense.setIdExpense((long) 3);
         expense.setSum(400);
         date = new Date();
         expense.setDate(date);
@@ -25,8 +24,8 @@ public class ExpenseTest {
 
     @Test
     public void testExpenseParameters(){
-      //  assertEquals((long) expense.getIdCategory(), 2);
-      //  assertEquals((long) expense.getIdExpense(), 3);
+        assertEquals((long) expense.getIdCategory(), 2);
+        assertEquals((long) expense.getIdExpense(), 3);
         assertEquals(400.0, expense.getSum(), 1e-15);
         assertEquals(expense.getDate(), date);
     }
