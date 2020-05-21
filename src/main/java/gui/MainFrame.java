@@ -348,22 +348,6 @@ public class MainFrame extends JFrame {
         validate();
         repaint();
         initializeSaveButton("", income, textField, datePicker, saveButton);
-        if (saveButton.getActionListeners().length > 0)
-            saveButton.removeActionListener(saveButton.getActionListeners()[0]);
-        saveButton.addActionListener(r -> {
-            try {
-                Double.parseDouble(textField.getText());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "Некорректно введена сумма расхода");
-                return;
-            }
-            if (datePicker.getModel().getValue() == null) {
-                JOptionPane.showMessageDialog(null, "Выберите дату");
-                return;
-            }
-            controller.setNewIncome(income, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
-            fillIncomeListPanel();
-        });
         validate();
         repaint();
     }
