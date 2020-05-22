@@ -68,4 +68,12 @@ public class IncomeRepository {
                 .setParameter("date", date)
                 .getResultList();
     }
+
+    public List<Income> findByMonth(Date prev, Date future){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select i from Income i where i.date > :prev and i.date < :future", Income.class)
+                .setParameter("prev", prev)
+                .setParameter("future", future)
+                .getResultList();
+    }
 }

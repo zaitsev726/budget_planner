@@ -8,6 +8,7 @@ import repository.IncomeRepository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.RollbackException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -93,6 +94,21 @@ public class IncomeRepositoryTest {
             assertNull(income);
         }
     }
+
+    public void findingByMonthTest() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        Date prev = c.getTime();
+
+        c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        Date future = c.getTime();
+        List<Income> incomes = incomeRepository.findByMonth(prev,future);
+        assertEquals(incomes.get(0).getDate().getMonth(), (new Date()).getMonth());
+    }
+
 
     @After
     public void deleteExpenses() {

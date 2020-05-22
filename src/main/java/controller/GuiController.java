@@ -1,8 +1,12 @@
 package controller;
 
 import com.sun.istack.NotNull;
+import entities.Category;
 import entities.Expense;
 import entities.Income;
+import repository.CategoryRepository;
+import repository.ExpenseRepository;
+import repository.IncomeRepository;
 import service.BudgetPlannerService;
 
 import java.awt.*;
@@ -24,7 +28,17 @@ public class GuiController {
     private List<String> categoryList;
 
     //
+
+    private CategoryRepository categoryRepository;
+    private ExpenseRepository expenseRepository;
+    private IncomeRepository incomeRepository;
+
+
     public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
+        this.categoryRepository = new CategoryRepository();
+        this.expenseRepository = new ExpenseRepository();
+        this.incomeRepository = new IncomeRepository();
+
         service = budgetPlannerService;
         this.categoryController = categoryController;
         LocalDate currentDate = LocalDate.now();
@@ -89,7 +103,12 @@ public class GuiController {
      * @return список, состоящий из названий категорий
      */
     public List<String> getCategoryList() {
-        return categoryList;
+        List<String> categoryNames = new ArrayList<>();
+        for(Category category: categoryRepository.findAll()){
+            categoryNames.add(category.getCategoryName());
+        }
+        return categoryNames;
+        //return categoryList;
     }
 
     /**
@@ -98,7 +117,17 @@ public class GuiController {
      * @return список процентов, который соответствует списку категорий, возвращаемых getCategoryList()
      */
     public List<Double> getCategoryValuesList() {
-        List<Double> testValues = new ArrayList<>();
+        List<Double> categoryValue = new ArrayList<>();
+        double totalSum = 0.0;
+        List<Category> allCategories = categoryRepository.findAll();
+        for(Category category : allCategories){
+            totalSum += category.getCurrentSum();
+        }
+        for(Category category : allCategories){
+            categoryValue.add(category.getCurrentSum() / totalSum);
+        }
+        return categoryValue;
+        /*List<Double> testValues = new ArrayList<>();
         testValues.add(0.0);
         testValues.add(50.0);
         testValues.add(25.0);
@@ -111,7 +140,7 @@ public class GuiController {
         testValues.add(12.5);
         testValues.add(12.5);
         testValues.add(12.5);
-        return testValues.subList(0, categoryList.size());
+        return testValues.subList(0, categoryList.size());*/
     }
 
     /**
@@ -121,7 +150,17 @@ public class GuiController {
      * @return лист расходов для категории с названием categoryName
      */
     public List<Expense> getExpenseListByCategoryName(String categoryName) {
-        return testList;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        Date prev = c.getTime();
+
+        c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        Date future = c.getTime();
+        Category category = categoryRepository.findByNameCategory(categoryName);
+        return expenseRepository.findExpensesByMonthAndCategory(prev,future,category.getIdCategory());
     }
 
     /**
@@ -132,10 +171,17 @@ public class GuiController {
      * @param date    новая дата расхода
      */
     public void setNewCategoryExpense(Expense expense, double sum, Date date) {
-        int index = testList.indexOf(expense);
+
+        /* int index = testList.indexOf(expense);
         Expense updated = testList.get(index);
         updated.setDate(date);
-        updated.setSum(sum);
+        updated.setSum(sum);*/
+        Category category = categoryRepository.findByIdCategory(expense.getIdCategory());
+        category.setCurrentSum(category.getCurrentSum() - expense.getSum() + sum);
+        categoryRepository.updateCategory(category);
+        expense.setSum(sum);
+        expense.setDate(date);
+        expenseRepository.updateExpense(expense);
     }
 
     /**
@@ -146,10 +192,13 @@ public class GuiController {
      * @param date   новая дата дохода
      */
     public void setNewIncome(Income income, double sum, Date date) {
-        int index = testIncomeList.indexOf(income);
+        /*int index = testIncomeList.indexOf(income);
         Income updated = testIncomeList.get(index);
         updated.setSum(sum);
-        updated.setDate(date);
+        updated.setDate(date);*/
+        income.setSum(sum);
+        income.setDate(date);
+        incomeRepository.updateIncome(income);
     }
 
     /**
@@ -158,21 +207,38 @@ public class GuiController {
      * @param categoryName название категории
      */
     public void addNewCategory(String categoryName) {
-        categoryList.add(categoryName);
+        Category category = new Category();
+        category.setCategoryName(categoryName);
+        category.setCurrentSum(0.0);
+        categoryRepository.saveCategory(category);
+        //categoryList.add(categoryName);
     }
 
     /**
      * @return список доходов за текущий месяц
      */
     public List<Income> getIncomeList() {
-        return testIncomeList;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        Date prev = c.getTime();
+
+        c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        Date future = c.getTime();
+        return incomeRepository.findByMonth(prev,future);
     }
 
     /**
      * @return сумму всех доходов за текущий месяц
      */
     public float getTotalIncome() {
-        return 5000.0f;
+        double totalSum = 0.0;
+        for(Income income: getIncomeList()){
+            totalSum+= income.getSum();
+        }
+        return (float) totalSum;
     }
 
     /**
@@ -207,10 +273,18 @@ public class GuiController {
      * @param sum сумма расхода
      */
     public void addNewExpenseByCategory(String categoryName, double sum) {
-        Expense expense = new Expense();
+       /* Expense expense = new Expense();
         expense.setSum(sum);
         expense.setDate(new Date());
-        testList.add(expense);
+        testList.add(expense);*/
+       Expense expense = new Expense();
+       Category category = categoryRepository.findByNameCategory(categoryName);
+       expense.setIdCategory(category.getIdCategory());
+       expense.setSum(sum);
+       expense.setDate(new Date());
+       expenseRepository.saveExpense(expense);
+       category.setCurrentSum(category.getCurrentSum() + sum);
+       categoryRepository.updateCategory(category);
     }
 
     /**
@@ -218,10 +292,14 @@ public class GuiController {
      * @param sum сумма дохода
      */
     public void addNewIncome(float sum) {
+        /*Income income = new Income();
+        income.setSum(sum);
+        income.setDate(new Date());
+        testIncomeList.add(income);*/
         Income income = new Income();
         income.setSum(sum);
         income.setDate(new Date());
-        testIncomeList.add(income);
+        incomeRepository.saveIncome(income);
     }
 
     /**
@@ -230,7 +308,16 @@ public class GuiController {
      */
     @NotNull
     public List<Expense> getExpenseList() {
-        return testList;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        Date prev = c.getTime();
+
+        c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        Date future = c.getTime();
+        return expenseRepository.findExpensesByMonth(prev,future);
     }
 
     /**
@@ -238,6 +325,10 @@ public class GuiController {
      * @return возвращает общую сумму расходов за текущий месяц
      */
     public double getTotalExpense() {
-        return 1800.0;
+        double totalSum = 0.0;
+        for (Expense expense : getExpenseList()){
+            totalSum += expense.getSum();
+        }
+        return totalSum;
     }
 }
