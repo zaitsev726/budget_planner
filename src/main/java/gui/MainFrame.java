@@ -85,24 +85,23 @@ public class MainFrame extends JFrame {
         });
         button3.addActionListener(e -> {
             controller.setNextMonth();
-            monthLabel.setText(controller.getCurrentMonth());
-            morePanel.setVisible(false);
-            fillCategoryListPanel();
-            fillIncomeListPanel();
-            fillExpenseListPanel();
-            validate();
-            repaint();
+            changeMonth();
         });
         button1.addActionListener(e -> {
             controller.setPreviousMonth();
-            monthLabel.setText(controller.getCurrentMonth());
-            morePanel.setVisible(false);
-            fillCategoryListPanel();
-            fillIncomeListPanel();
-            fillExpenseListPanel();
-            validate();
-            repaint();
+            changeMonth();
         });
+    }
+
+    private void changeMonth() {
+        monthLabel.setText(controller.getCurrentMonth());
+        morePanel.setVisible(false);
+        fillCategoryListPanel();
+        fillIncomeListPanel();
+        fillExpenseListPanel();
+        generateColorsValuesAndPieChart();
+        validate();
+        repaint();
     }
 
     private void fillCategoryListPanel() {

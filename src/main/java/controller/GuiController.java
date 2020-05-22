@@ -7,7 +7,6 @@ import entities.Income;
 import repository.CategoryRepository;
 import repository.ExpenseRepository;
 import repository.IncomeRepository;
-import service.BudgetPlannerService;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -16,61 +15,25 @@ import java.util.List;
 import java.util.*;
 
 public class GuiController {
-    private BudgetPlannerService service;
-    private CategoryController categoryController;
     private final Random rand = new Random();
     private Month currentMonth;
     private int currentYear;
     private List<Color> colorList;
-    //test
-    private List<Expense> testList;
-    private List<Income> testIncomeList;
-    private List<String> categoryList;
-
-    //
 
     private CategoryRepository categoryRepository;
     private ExpenseRepository expenseRepository;
     private IncomeRepository incomeRepository;
 
 
-    public GuiController(BudgetPlannerService budgetPlannerService, CategoryController categoryController) {
+    public GuiController() {
         this.categoryRepository = new CategoryRepository();
         this.expenseRepository = new ExpenseRepository();
         this.incomeRepository = new IncomeRepository();
 
-        service = budgetPlannerService;
-        this.categoryController = categoryController;
         LocalDate currentDate = LocalDate.now();
         currentMonth = currentDate.getMonth();
         currentYear = currentDate.getYear();
         generateColorList();
-        //test
-        categoryList = new ArrayList<>();
-        categoryList.add("Продукты");//(new String("Продукты".getBytes(), UTF_8));
-        categoryList.add("Транспорт");
-        categoryList.add("Здоровье");
-        categoryList.add("Рестораны");
-
-        testIncomeList = new ArrayList<>();
-        Income i1 = new Income();
-        i1.setSum(200.0);
-        i1.setDate(new GregorianCalendar(2020, Calendar.MARCH, 13).getTime());
-        testIncomeList.add(i1);
-        Income i2 = new Income();
-        i2.setDate(new GregorianCalendar(2020, Calendar.MAY, 11).getTime());
-        i2.setSum(12000.0);
-        testIncomeList.add(i2);
-        testList = new ArrayList<>();
-        Expense e = new Expense();
-        e.setSum(1800.0);
-        e.setDate(new GregorianCalendar(2020, Calendar.FEBRUARY, 22).getTime());
-        testList.add(e);
-        Expense e2 = new Expense();
-        e2.setSum(200.0);
-        e2.setDate(new GregorianCalendar(2020, Calendar.MAY, 15).getTime());
-        testList.add(e2);
-        //
     }
 
     /**
@@ -80,6 +43,12 @@ public class GuiController {
      * @return список Color'ов
      */
     public List<Color> getColorList(int size) {
+        if (size > 10000) {
+            List<Color> bigColorList = new ArrayList<>(colorList);
+            bigColorList.addAll(generateMoreColors(size - 10000));
+            colorList = bigColorList;
+            return colorList;
+        }
         return colorList.subList(0, size);
     }
 
@@ -97,6 +66,22 @@ public class GuiController {
             } while (colorList.contains(new Color(r, g, b)));
             colorList.add(new Color(r, g, b));
         }
+    }
+
+    private List<Color> generateMoreColors(int size) {
+        List<Color> moreColors = new ArrayList<>();
+        float r;
+        float g;
+        float b;
+        for (int i = 0; i < size; ++i) {
+            do {
+                r = (float) (rand.nextFloat() / 2f + 0.5);
+                g = (float) (rand.nextFloat() / 2f + 0.5);
+                b = (float) (rand.nextFloat() / 2f + 0.5);
+            } while (colorList.contains(new Color(r, g, b)) || moreColors.contains(new Color(r, g, b)));
+            moreColors.add(new Color(r, g, b));
+        }
+        return moreColors;
     }
 
     /**
@@ -129,20 +114,6 @@ public class GuiController {
             categoryValue.add(category.getCurrentSum() / totalSum * 100.0);
         }
         return categoryValue;
-        /*List<Double> testValues = new ArrayList<>();
-        testValues.add(0.0);
-        testValues.add(50.0);
-        testValues.add(25.0);
-        testValues.add(25.0);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        testValues.add(12.5);
-        return testValues.subList(0, categoryList.size());*/
     }
 
     /**
@@ -152,15 +123,8 @@ public class GuiController {
      * @return лист расходов для категории с названием categoryName
      */
     public List<Expense> getExpenseListByCategoryName(String categoryName) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
-        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        Date prev = c.getTime();
-
-        c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
-        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
-        Date future = c.getTime();
+        Date prev = getStartDate();
+        Date future = getFinishDate();
         Category category = categoryRepository.findByNameCategory(categoryName);
         return expenseRepository.findExpensesByMonthAndCategory(prev, future, category.getIdCategory());
     }
@@ -173,11 +137,6 @@ public class GuiController {
      * @param date    новая дата расхода
      */
     public void setNewCategoryExpense(Expense expense, double sum, Date date) {
-
-        /* int index = testList.indexOf(expense);
-        Expense updated = testList.get(index);
-        updated.setDate(date);
-        updated.setSum(sum);*/
         Category category = categoryRepository.findByIdCategory(expense.getIdCategory());
         category.setCurrentSum(category.getCurrentSum() - expense.getSum() + sum);
         categoryRepository.updateCategory(category);
@@ -194,10 +153,6 @@ public class GuiController {
      * @param date   новая дата дохода
      */
     public void setNewIncome(Income income, double sum, Date date) {
-        /*int index = testIncomeList.indexOf(income);
-        Income updated = testIncomeList.get(index);
-        updated.setSum(sum);
-        updated.setDate(date);*/
         income.setSum(sum);
         income.setDate(date);
         incomeRepository.updateIncome(income);
@@ -220,15 +175,8 @@ public class GuiController {
      * @return список доходов за текущий месяц
      */
     public List<Income> getIncomeList() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
-        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        Date prev = c.getTime();
-
-        c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
-        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
-        Date future = c.getTime();
+        Date prev = getStartDate();
+        Date future = getFinishDate();
         return incomeRepository.findByMonth(prev, future);
     }
 
@@ -275,10 +223,6 @@ public class GuiController {
      * @param sum          сумма расхода
      */
     public void addNewExpenseByCategory(String categoryName, double sum) {
-       /* Expense expense = new Expense();
-        expense.setSum(sum);
-        expense.setDate(new Date());
-        testList.add(expense);*/
         Expense expense = new Expense();
         Category category = categoryRepository.findByNameCategory(categoryName);
         expense.setIdCategory(category.getIdCategory());
@@ -295,10 +239,6 @@ public class GuiController {
      * @param sum сумма дохода
      */
     public void addNewIncome(float sum) {
-        /*Income income = new Income();
-        income.setSum(sum);
-        income.setDate(new Date());
-        testIncomeList.add(income);*/
         Income income = new Income();
         income.setSum(sum);
         income.setDate(new Date());
@@ -310,16 +250,26 @@ public class GuiController {
      */
     @NotNull
     public List<Expense> getExpenseList() {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
-        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
-        Date prev = c.getTime();
-
-        c = Calendar.getInstance();
-        c.set(Calendar.MONTH, c.get(Calendar.MONTH) + 1);
-        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
-        Date future = c.getTime();
+        Date prev = getStartDate();
+        Date future = getFinishDate();
         return expenseRepository.findExpensesByMonth(prev, future);
+    }
+
+    private Date getStartDate() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, currentYear);
+        c.set(Calendar.MONTH, currentMonth.getValue() - 2); //-1 because of different types, -1 because previous month
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        return c.getTime();
+    }
+
+    private Date getFinishDate() {
+        Calendar c;
+        c = Calendar.getInstance();
+        c.set(Calendar.MONTH, currentMonth.getValue()); //+2-2 = 0
+        c.set(Calendar.YEAR, currentYear + ((currentMonth.getValue() == 12) ? 1 : 0)); //if month is december then year = year+1
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        return c.getTime();
     }
 
     /**
