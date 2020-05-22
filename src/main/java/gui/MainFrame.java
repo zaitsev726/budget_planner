@@ -12,6 +12,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -51,7 +53,8 @@ public class MainFrame extends JFrame {
     private JPanel trap;
     private static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     private static final int SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
-    private static final String FORMAT_PATTERN = "dd-MMM-yyyy";
+    private static final String DATE_FORMAT_PATTERN = "dd-MMM-yyyy";
+    private static final String DECIMAL_FORMAT_PATTERN = "#,##0.00";
     private final transient GuiController controller;
     private List<Color> colorList;
 
@@ -106,6 +109,11 @@ public class MainFrame extends JFrame {
         int size = controller.getCategoryList().size();
         int i = 0;
         categoryListPanel.removeAll();
+        if (size < 1) {
+            validate();
+            repaint();
+            return;
+        }
         categoryListPanel.setLayout(new GridLayoutManager(size, 1, new Insets(0, 0, 0, 0), -1, -1));
         for (String category : controller.getCategoryList()) {
             final JPanel panel3 = new JPanel();
@@ -138,14 +146,15 @@ public class MainFrame extends JFrame {
         categoryLabel.setText(categoryName);
         List<Expense> expenseList = controller.getExpenseListByCategoryName(categoryName);
         categoryExpenseList.removeAll();
-        if (expenseList.isEmpty()) return;
-        categoryExpenseList.setLayout(new GridLayoutManager(expenseList.size() + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        int i = 0;
-        for (Expense expense : expenseList) {
-            i = constructExpensePanel(categoryName, i, expense);
+        if (!expenseList.isEmpty()) {
+            categoryExpenseList.setLayout(new GridLayoutManager(expenseList.size() + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
+            int i = 0;
+            for (Expense expense : expenseList) {
+                i = constructExpensePanel(categoryName, i, expense);
+            }
+            final Spacer spacer2 = new Spacer();
+            categoryExpenseList.add(spacer2, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         }
-        final Spacer spacer2 = new Spacer();
-        categoryExpenseList.add(spacer2, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         addingNewExpenseProperty(categoryName);
         validate();
         repaint();
@@ -172,6 +181,7 @@ public class MainFrame extends JFrame {
             addExpenseField.setText("");
             activateMorePanel(categoryName);
             fillExpenseListPanel();
+            generateColorsValuesAndPieChart();
         });
     }
 
@@ -183,13 +193,13 @@ public class MainFrame extends JFrame {
         final JLabel label1 = new JLabel();
         Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, label1.getFont().getSize());
         label1.setFont(label1Font);
-        label1.setText(String.valueOf(expense.getSum()));
+        label1.setText(new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(expense.getSum()));
         expenseTemplatePanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setForeground(new Color(-7631989));
         label2.setHorizontalAlignment(4);
         label2.setHorizontalTextPosition(4);
-        SimpleDateFormat formattedDate = new SimpleDateFormat(FORMAT_PATTERN);
+        SimpleDateFormat formattedDate = new SimpleDateFormat(DATE_FORMAT_PATTERN);
         label2.setText(formattedDate.format(expense.getDate()));
         expenseTemplatePanel.add(label2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         JButton editButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
@@ -212,7 +222,7 @@ public class MainFrame extends JFrame {
         expenseTemplatePanel.removeAll();
         expenseTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(2, 2, 2, 2), -1, -1));
         JTextField textField = new JTextField();
-        textField.setText(String.valueOf(expense.getSum()));
+        textField.setText(new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH)).format(expense.getSum()));
         expenseTemplatePanel.add(textField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
         UtilDateModel model = new UtilDateModel();
         Properties properties = new Properties();
@@ -232,16 +242,17 @@ public class MainFrame extends JFrame {
     private void fillIncomeListPanel() {
         List<Income> incomeList = controller.getIncomeList();
         float totalIncome = controller.getTotalIncome();
-        incomeLabel.setText("Доходы (" + totalIncome + ")");
+        incomeLabel.setText("Доходы (" + new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(totalIncome) + ")");
         incomeListPanel.removeAll();
-        if (incomeList.isEmpty()) return;
-        incomeListPanel.setLayout(new GridLayoutManager(incomeList.size() + 1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        int i = 0;
-        for (Income income : incomeList) {
-            i = constructIncomeTemplatePanel(i, income);
+        if (!incomeList.isEmpty()) {
+            incomeListPanel.setLayout(new GridLayoutManager(incomeList.size() + 1, 2, new Insets(0, 0, 0, 0), -1, -1));
+            int i = 0;
+            for (Income income : incomeList) {
+                i = constructIncomeTemplatePanel(i, income);
+            }
+            final Spacer spacer2 = new Spacer();
+            incomeListPanel.add(spacer2, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         }
-        final Spacer spacer2 = new Spacer();
-        incomeListPanel.add(spacer2, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         addingNewIncomeProperty();
         validate();
         repaint();
@@ -269,7 +280,7 @@ public class MainFrame extends JFrame {
     }
 
     private int constructIncomeTemplatePanel(int i, Income income) {
-        incomeTemplatePanel = new JPanel();
+        JPanel incomeTemplatePanel = new JPanel();
         incomeTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         incomeTemplatePanel.setBackground(new Color(-657931));
         incomeListPanel.add(incomeTemplatePanel, new GridConstraints(i++, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -277,7 +288,7 @@ public class MainFrame extends JFrame {
         Font label1Font = new Font(label1.getFont().getName(), Font.BOLD, label1.getFont().getSize());
         label1.setFont(label1Font);
         label1.setForeground(new Color(-16734075));
-        label1.setText("+" + income.getSum());
+        label1.setText("+" + new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(income.getSum()));
         incomeTemplatePanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JButton editIncomeButton = new JButton(new ImageIcon(getClass().getResource("/edit.png")));
         editIncomeButton.setBorderPainted(false);
@@ -290,13 +301,13 @@ public class MainFrame extends JFrame {
         editIncomeButton.setText("");
         if (editIncomeButton.getActionListeners().length > 0)
             editIncomeButton.removeActionListener(editIncomeButton.getActionListeners()[0]);
-        editIncomeButton.addActionListener(e -> repaintIncomeTemplateForEditing(income));
+        editIncomeButton.addActionListener(e -> repaintIncomeTemplateForEditing(income, incomeTemplatePanel));
         incomeTemplatePanel.add(editIncomeButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(20, 20), new Dimension(40, 20), 0, false));
         final JLabel label2 = new JLabel();
         label2.setForeground(new Color(-7631989));
         label2.setHorizontalAlignment(4);
         label2.setHorizontalTextPosition(4);
-        SimpleDateFormat formattedDate = new SimpleDateFormat(FORMAT_PATTERN);
+        SimpleDateFormat formattedDate = new SimpleDateFormat(DATE_FORMAT_PATTERN);
         label2.setText(formattedDate.format(income.getDate()));
         incomeTemplatePanel.add(label2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         return i;
@@ -329,11 +340,11 @@ public class MainFrame extends JFrame {
         });
     }
 
-    private void repaintIncomeTemplateForEditing(Income income) {
+    private void repaintIncomeTemplateForEditing(Income income, JPanel incomeTemplatePanel) {
         incomeTemplatePanel.removeAll();
         incomeTemplatePanel.setLayout(new GridLayoutManager(1, 3, new Insets(2, 2, 2, 2), -1, -1));
         JTextField textField = new JTextField();
-        textField.setText(String.valueOf(income.getSum()));
+        textField.setText(new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH)).format(income.getSum()));
         incomeTemplatePanel.add(textField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
         UtilDateModel model = new UtilDateModel();
         Properties properties = new Properties();
@@ -355,7 +366,7 @@ public class MainFrame extends JFrame {
     private void fillExpenseListPanel() {
         List<Expense> expenseList = controller.getExpenseList();
         double totalExpense = controller.getTotalExpense();
-        expenseLabel.setText("Расходы (" + totalExpense + ")");
+        expenseLabel.setText("Расходы (" + new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(totalExpense) + ")");
         expenseListPanel.removeAll();
         if (expenseList.isEmpty()) return;
         expenseListPanel.setLayout(new GridLayoutManager(expenseList.size() + 1, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -379,13 +390,13 @@ public class MainFrame extends JFrame {
         Font expenseSumLabelFont = new Font(expenseSumLabel.getFont().getName(), Font.BOLD, expenseSumLabel.getFont().getSize());
         expenseSumLabel.setFont(expenseSumLabelFont);
         expenseSumLabel.setForeground(new Color(-7405514));
-        expenseSumLabel.setText("-" + expense.getSum());
+        expenseSumLabel.setText("-" + new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(expense.getSum()));
         totalExpenseTemplatePanel.add(expenseSumLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         JLabel expenseDateLabel = new JLabel();
         expenseDateLabel.setForeground(new Color(-7631989));
         expenseDateLabel.setHorizontalAlignment(4);
         expenseDateLabel.setHorizontalTextPosition(4);
-        SimpleDateFormat formattedDate = new SimpleDateFormat(FORMAT_PATTERN);
+        SimpleDateFormat formattedDate = new SimpleDateFormat(DATE_FORMAT_PATTERN);
         expenseDateLabel.setText(formattedDate.format(expense.getDate()));
         totalExpenseTemplatePanel.add(expenseDateLabel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         return i;

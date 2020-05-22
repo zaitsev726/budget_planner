@@ -2,7 +2,10 @@ package repository;
 
 import entities.Income;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
 
@@ -71,7 +74,7 @@ public class IncomeRepository {
 
     public List<Income> findByMonth(Date prev, Date future){
         EntityManager em = emf.createEntityManager();
-        return em.createQuery("select i from Income i where i.date > :prev and i.date < :future", Income.class)
+        return em.createQuery("select i from Income i where i.date > :prev and i.date < :future order by i.date desc, i.sum desc", Income.class)
                 .setParameter("prev", prev)
                 .setParameter("future", future)
                 .getResultList();
