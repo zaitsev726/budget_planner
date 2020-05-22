@@ -2,7 +2,11 @@ package repository;
 
 import entities.Category;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+import java.util.List;
 
 public class CategoryRepository {
     EntityManagerFactory emf;
@@ -66,5 +70,11 @@ public class CategoryRepository {
         return em.createQuery("select c from Category c where c.categoryName = :name", Category.class)
                 .setParameter("name", nameCategory)
                 .getSingleResult();
+    }
+
+    public List<Category> findAll(){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select c from Category c", Category.class)
+                .getResultList();
     }
 }

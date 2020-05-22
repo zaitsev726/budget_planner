@@ -7,11 +7,13 @@ import org.junit.Test;
 import repository.CategoryRepository;
 
 import javax.persistence.NoResultException;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class CategoryRepositoryTest {
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
+    private List<Category> categories;
 
     @Before
     public void createCategories() {
@@ -37,6 +39,8 @@ public class CategoryRepositoryTest {
         categoryRepository.saveCategory(category2);
         categoryRepository.saveCategory(category3);
         categoryRepository.saveCategory(category4);
+
+        categories = categoryRepository.findAll();
     }
 
     @Test
@@ -81,7 +85,6 @@ public class CategoryRepositoryTest {
         }
 
 
-
         category = null;
         categoryRepository.deleteCategory(categoryRepository.findByNameCategory("Категория3").getIdCategory());
 
@@ -93,6 +96,13 @@ public class CategoryRepositoryTest {
 
         categoryRepository.deleteCategory(null);
 
+    }
+
+
+    @Test
+    public void findingAllTest() {
+        assertEquals(categories.size(), 4);
+        assertEquals(categories.get(2).getCurrentSum(),200.96, 0.01);
     }
 
     @After

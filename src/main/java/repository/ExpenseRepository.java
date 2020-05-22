@@ -4,6 +4,7 @@ import entities.Category;
 import entities.Expense;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 public class ExpenseRepository {
@@ -67,5 +68,22 @@ public class ExpenseRepository {
         return em.createQuery("select e from Expense e where e.idExpense = :id", Expense.class)
                 .setParameter("id", id_expense)
                 .getSingleResult();
+    }
+
+    public List<Expense> findExpensesByMonth(Date prevMonth, Date futureMonth){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select e from Expense e where e.date > :prev and e.date < :future", Expense.class)
+                .setParameter("prev", prevMonth)
+                .setParameter("future", futureMonth)
+                .getResultList();
+    }
+
+    public List<Expense> findExpensesByMonthAndCategory(Date prevMonth, Date futureMonth, long id_category){
+        EntityManager em = emf.createEntityManager();
+        return em.createQuery("select e from Expense e where e.date > :prev and e.date < :future and e.idCategory = :id_category order by e.idCategory desc ", Expense.class)
+                .setParameter("prev", prevMonth)
+                .setParameter("future", futureMonth)
+                .setParameter("id_category", id_category)
+                .getResultList();
     }
 }
