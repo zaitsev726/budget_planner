@@ -168,7 +168,6 @@ public class GuiController {
         category.setCategoryName(categoryName);
         category.setCurrentSum(0.0);
         categoryRepository.saveCategory(category);
-        //categoryList.add(categoryName);
     }
 
     /**
