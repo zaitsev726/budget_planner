@@ -107,11 +107,18 @@ public class GuiController {
         double totalSum = 0.0;
         List<Category> allCategories = categoryRepository.findAll();
         for (Category category : allCategories) {
-            totalSum += category.getCurrentSum();
+            List<Expense> expenseList = expenseRepository.findExpensesByMonthAndCategory(getStartDate(), getFinishDate(), category.getIdCategory());
+            for(Expense expense: expenseList)
+                totalSum += expense.getSum();
         }
         if (totalSum == 0) return categoryValue;
+
         for (Category category : allCategories) {
-            categoryValue.add(category.getCurrentSum() / totalSum * 100.0);
+            List<Expense> expenseList = expenseRepository.findExpensesByMonthAndCategory(getStartDate(), getFinishDate(), category.getIdCategory());
+            double categorySum = 0;
+            for(Expense expense: expenseList)
+                categorySum += expense.getSum();
+            categoryValue.add(categorySum/totalSum * 100.0);
         }
         return categoryValue;
     }
