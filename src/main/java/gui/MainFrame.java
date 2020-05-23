@@ -80,6 +80,7 @@ public class MainFrame extends JFrame {
                 return;
             }
             controller.addNewCategory(textField1.getText());
+            textField1.setText("");
             generateColorsValuesAndPieChart();
             fillCategoryListPanel();
         });
@@ -331,10 +332,12 @@ public class MainFrame extends JFrame {
                 controller.setNewCategoryExpense(expense, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
                 activateMorePanel(categoryName);
                 fillExpenseListPanel();
+                generateColorsValuesAndPieChart();
             } else if (operation instanceof Income) {
                 Income income = (Income) operation;
                 controller.setNewIncome(income, Double.parseDouble(textField.getText()), (Date) datePicker.getModel().getValue());
                 fillIncomeListPanel();
+                generateColorsValuesAndPieChart();
             }
         });
     }
