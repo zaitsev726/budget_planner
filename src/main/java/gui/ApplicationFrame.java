@@ -24,7 +24,6 @@ public class ApplicationFrame extends JFrame {
     private JButton button2;
     private JTextField textField1;
     private JPanel categoryListPanel;
-    private JScrollPane scrollPane1;
     private JPanel morePanel;
     private JPanel incomeListPanel;
     private JLabel incomeLabel;
@@ -32,21 +31,13 @@ public class ApplicationFrame extends JFrame {
     private JLabel monthLabel;
     private JButton button1;
     private JPanel expenseListPanel;
-    private JPanel panel1;
     private JLabel categoryLabel;
-    private JScrollPane categoryExpenseScrollPane;
     private JPanel categoryExpenseList;
-    private JPanel addExpensePanel;
     private JButton addNewExpenseButton;
     private JTextField addExpenseField;
-    private JButton button4;
     private JButton addIncomeButton;
     private JTextField addIncomeField;
-    private JPanel addIncomePanel;
     private JLabel expenseLabel;
-    private JPanel totalExpenseTemplatePanel;
-    private JLabel expenseSumLabel;
-    private JLabel expenseDateLabel;
     private JPanel trap;
     private JLabel totalLabel;
     private static final int SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -277,6 +268,7 @@ public class ApplicationFrame extends JFrame {
             controller.addNewIncome(sum);
             addIncomeField.setText("");
             fillIncomeListPanel();
+            updateTotal();
         });
     }
 
@@ -434,7 +426,10 @@ public class ApplicationFrame extends JFrame {
 
     private void updateTotal() {
         double sum = controller.getTotalIncome() - controller.getTotalExpense();
-        totalLabel.setText((sum >= 0.0 ? "+" : "-") + sum);
+        totalLabel.setText((sum >= 0.0 ? "+" : "-") +
+                new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(sum));
+        validate();
+        repaint();
     }
 
     private static class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
