@@ -1,6 +1,5 @@
 package controller;
 
-import com.sun.istack.NotNull;
 import entities.Category;
 import entities.Expense;
 import entities.Income;
@@ -8,6 +7,7 @@ import repository.CategoryRepository;
 import repository.ExpenseRepository;
 import repository.IncomeRepository;
 
+import javax.validation.constraints.NotNull;
 import java.awt.*;
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -46,6 +46,9 @@ public class GuiController {
      * @return список Color'ов
      */
     public List<Color> getColorList(int size) {
+        if (size < 0) {
+            return new ArrayList<>();
+        }
         if (size > 10000) {
             List<Color> bigColorList = new ArrayList<>(colorList);
             bigColorList.addAll(generateMoreColors(size - 10000));
@@ -247,7 +250,7 @@ public class GuiController {
      *
      * @param sum сумма дохода
      */
-    public void addNewIncome(float sum) {
+    public void addNewIncome(double sum) {
         Income income = new Income();
         income.setSum(sum);
         income.setDate(new Date());
