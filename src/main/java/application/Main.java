@@ -1,10 +1,10 @@
 package application;
 
 import controller.GuiController;
-import gui.MainFrame;
+import gui.ApplicationFrame;
 
 public class Main {
     public static void main(String[] args) {
-        new MainFrame(new GuiController());
+        new ApplicationFrame(new GuiController());
     }
 }
