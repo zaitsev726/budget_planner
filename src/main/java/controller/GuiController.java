@@ -9,20 +9,23 @@ import repository.ExpenseRepository;
 import repository.IncomeRepository;
 
 import java.awt.*;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.*;
 
 public class GuiController {
-    private final Random rand = new Random();
+    private final SecureRandom rand = new SecureRandom();
     private Month currentMonth;
     private int currentYear;
     private List<Color> colorList;
 
-    private CategoryRepository categoryRepository;
-    private ExpenseRepository expenseRepository;
-    private IncomeRepository incomeRepository;
+    private final CategoryRepository categoryRepository;
+    private final ExpenseRepository expenseRepository;
+    private final IncomeRepository incomeRepository;
 
 
     public GuiController() {
@@ -108,7 +111,7 @@ public class GuiController {
         List<Category> allCategories = categoryRepository.findAll();
         for (Category category : allCategories) {
             List<Expense> expenseList = expenseRepository.findExpensesByMonthAndCategory(getStartDate(), getFinishDate(), category.getIdCategory());
-            for(Expense expense: expenseList)
+            for (Expense expense : expenseList)
                 totalSum += expense.getSum();
         }
         if (totalSum == 0) return categoryValue;
@@ -116,9 +119,9 @@ public class GuiController {
         for (Category category : allCategories) {
             List<Expense> expenseList = expenseRepository.findExpensesByMonthAndCategory(getStartDate(), getFinishDate(), category.getIdCategory());
             double categorySum = 0;
-            for(Expense expense: expenseList)
+            for (Expense expense : expenseList)
                 categorySum += expense.getSum();
-            categoryValue.add(categorySum/totalSum * 100.0);
+            categoryValue.add(categorySum / totalSum * 100.0);
         }
         return categoryValue;
     }
