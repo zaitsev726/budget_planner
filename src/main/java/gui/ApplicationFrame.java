@@ -66,6 +66,7 @@ public class ApplicationFrame extends JFrame {
         );
         setContentPane(totalPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        updateTotal();
         monthLabel.setText(controller.getCurrentMonth());
         pack();
         setVisible(true);
@@ -241,7 +242,7 @@ public class ApplicationFrame extends JFrame {
 
     private void fillIncomeListPanel() {
         List<Income> incomeList = controller.getIncomeList();
-        float totalIncome = controller.getTotalIncome();
+        double totalIncome = controller.getTotalIncome();
         incomeLabel.setText("Доходы (" + new DecimalFormat(DECIMAL_FORMAT_PATTERN, new DecimalFormatSymbols(Locale.ENGLISH)).format(totalIncome) + ")");
         incomeListPanel.removeAll();
         if (!incomeList.isEmpty()) {

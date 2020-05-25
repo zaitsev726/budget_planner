@@ -195,12 +195,12 @@ public class GuiController {
     /**
      * @return сумму всех доходов за текущий месяц
      */
-    public float getTotalIncome() {
+    public double getTotalIncome() {
         double totalSum = 0.0;
         for (Income income : getIncomeList()) {
             totalSum += income.getSum();
         }
-        return (float) totalSum;
+        return totalSum;
     }
 
     /**
@@ -286,6 +286,7 @@ public class GuiController {
 
     /**
      * Возвращает нынешнюю дату, если мы находимся на текущем месяце. Или первый день месяца, который выбран в приложении
+     *
      * @return дату, отвечающую условию выше
      */
     private Date getDateForAddingOperation() {

@@ -20,6 +20,7 @@ import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -134,6 +135,64 @@ public class MockitoGuiControllerTest {
         new IncomeRepository().deleteIncome(actual.getIdIncome());
     }
 
+    @Test
+    public void totalTest() {
+        Assert.assertEquals(0.0, controller.getTotalIncome(), 1e-15);
+        Assert.assertEquals(0.0, controller.getTotalExpense(), 1e-15);
+        controller.addNewIncome(500);
+        Assert.assertEquals(500, controller.getTotalIncome(), 1e-15);
+        Assert.assertEquals(1, controller.getIncomeList().size());
+        Income income = controller.getIncomeList().get(0);
+        new IncomeRepository().deleteIncome(income.getIdIncome());
+
+        controller.addNewCategory(newCategory);
+
+        controller.addNewExpenseByCategory(newCategory, 500);
+        Assert.assertEquals(500, controller.getTotalExpense(), 1e-15);
+        Assert.assertEquals(1, controller.getExpenseListByCategoryName(newCategory).size());
+        Expense expense = controller.getExpenseListByCategoryName(newCategory).get(0);
+        new ExpenseRepository().deleteExpense(expense.getIdExpense());
+        new CategoryRepository().deleteCategory(newCategory);
+    }
+
+    @Test
+    public void changeMonthTest() {
+        controller.setPreviousMonth();
+        Assert.assertEquals(0.0, controller.getTotalIncome(), 1e-15);
+        Assert.assertEquals(0.0, controller.getTotalExpense(), 1e-15);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, c.get(Calendar.YEAR) + (c.get(Calendar.MONTH) == Calendar.DECEMBER ? -1 : 0));
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        {
+            controller.addNewIncome(500.0);
+            Income income = controller.getIncomeList().get(0);
+            Income expected = new Income();
+            expected.setSum(500.0);
+            expected.setDate(c.getTime());
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            Assert.assertEquals(expected.getSum(), income.getSum(), 1e-15);
+            Assert.assertEquals(formatter.format(expected.getDate()), formatter.format(income.getDate()));
+            new IncomeRepository().deleteIncome(income.getIdIncome());
+        }
+        {
+            controller.addNewCategory(newCategory);
+            controller.addNewExpenseByCategory(newCategory, 500.0);
+            Expense expense = controller.getExpenseListByCategoryName(newCategory).get(0);
+            Expense expected = new Expense();
+            expected.setSum(500.0);
+            expected.setDate(c.getTime());
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            Assert.assertEquals(expected.getSum(), expense.getSum(), 1e-15);
+            Assert.assertEquals(formatter.format(expected.getDate()), formatter.format(expense.getDate()));
+            new ExpenseRepository().deleteExpense(expense.getIdExpense());
+            new CategoryRepository().deleteCategory(newCategory);
+        }
+        controller.setNextMonth();
+        Assert.assertEquals(0, controller.getExpenseList().size());
+        Assert.assertEquals(0, controller.getIncomeList().size());
+    }
 }
 
 
