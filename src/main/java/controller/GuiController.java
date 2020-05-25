@@ -239,7 +239,7 @@ public class GuiController {
         Category category = categoryRepository.findByNameCategory(categoryName);
         expense.setIdCategory(category.getIdCategory());
         expense.setSum(sum);
-        expense.setDate(new Date());
+        expense.setDate(getDateForAddingOperation());
         expenseRepository.saveExpense(expense);
         category.setCurrentSum(category.getCurrentSum() + sum);
         categoryRepository.updateCategory(category);
@@ -253,7 +253,7 @@ public class GuiController {
     public void addNewIncome(double sum) {
         Income income = new Income();
         income.setSum(sum);
-        income.setDate(new Date());
+        income.setDate(getDateForAddingOperation());
         incomeRepository.saveIncome(income);
     }
 
@@ -278,10 +278,32 @@ public class GuiController {
     private Date getFinishDate() {
         Calendar c;
         c = Calendar.getInstance();
-        c.set(Calendar.MONTH, currentMonth.getValue()); //+2-2 = 0
         c.set(Calendar.YEAR, currentYear + ((currentMonth.getValue() == 12) ? 1 : 0)); //if month is december then year = year+1
+        c.set(Calendar.MONTH, currentMonth.getValue()); //+2-2 = 0
         c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
         return c.getTime();
+    }
+
+    /**
+     * Возвращает нынешнюю дату, если мы находимся на текущем месяце. Или первый день месяца, который выбран в приложении
+     * @return дату, отвечающую условию выше
+     */
+    private Date getDateForAddingOperation() {
+        Date date = new Date();
+        if (currentMonth.getValue() - 1 != Calendar.getInstance().get(Calendar.MONTH))
+            date = getDateByCurrentMonth();
+        return date;
+    }
+
+
+    private Date getDateByCurrentMonth() {
+        Date date;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, currentYear);
+        c.set(Calendar.MONTH, currentMonth.getValue() - 1);
+        c.set(Calendar.DATE, c.getActualMinimum(Calendar.DATE));
+        date = c.getTime();
+        return date;
     }
 
     /**
