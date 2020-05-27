@@ -7,9 +7,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CategoryRepository {
     EntityManagerFactory emf;
+
+    private static Logger log = Logger.getLogger(CategoryRepository.class.getName());
 
     public CategoryRepository() {
         emf = Persistence.createEntityManagerFactory("model");
@@ -51,7 +55,7 @@ public class CategoryRepository {
             em.getTransaction().commit();
             em.close();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception: ", e);
             em.getTransaction().rollback();
             return null;
         }

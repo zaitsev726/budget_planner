@@ -6,9 +6,12 @@ import entities.Expense;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ExpenseRepository {
     EntityManagerFactory emf;
+    private static Logger log = Logger.getLogger(CategoryRepository.class.getName());
 
     public ExpenseRepository() {
         emf = Persistence.createEntityManagerFactory("model");
@@ -50,7 +53,7 @@ public class ExpenseRepository {
             em.getTransaction().commit();
             em.close();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception: ", e);
             em.getTransaction().rollback();
         }
         return expense;

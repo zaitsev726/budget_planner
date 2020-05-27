@@ -8,9 +8,12 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IncomeRepository {
     EntityManagerFactory emf;
+    private static Logger log = Logger.getLogger(CategoryRepository.class.getName());
 
     public IncomeRepository() {
         emf = Persistence.createEntityManagerFactory("model");
@@ -51,7 +54,7 @@ public class IncomeRepository {
             em.getTransaction().commit();
             em.close();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception: ", e);
             em.getTransaction().rollback();
             return null;
         }
