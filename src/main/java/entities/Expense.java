@@ -2,6 +2,7 @@ package entities;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class Expense {
@@ -68,6 +69,11 @@ public class Expense {
                     expense.getSum() == this.sum && expense.getDate().equals(date);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idExpense, sum, date, idCategory, categoryExpense);
     }
 
     @Override

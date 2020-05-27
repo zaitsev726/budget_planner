@@ -72,6 +72,11 @@ public class Category {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(idCategory, currentSum, categoryName, expenses);
+    }
+
+    @Override
     public String toString() {
         return "Category{" +
                 "idCategory=" + idCategory +

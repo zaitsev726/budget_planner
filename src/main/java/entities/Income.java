@@ -41,6 +41,11 @@ public class Income {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(idIncome, sum, date);
+    }
+
+    @Override
     public String toString() {
         return "Income{" +
                 "idIncome=" + idIncome +
