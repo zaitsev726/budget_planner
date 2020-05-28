@@ -16,7 +16,9 @@ public class Income {
     @Column
     private Date date;
 
-    public Income(){}
+    public Income(){
+        //Do nothing because it's hibernate constructor
+    }
 
     public Long getIdIncome() { return idIncome; }
 

@@ -46,7 +46,9 @@ public class Category {
         expense.setCategoryExpense(null);
     }
 
-    public Category(){}
+    public Category(){
+        //Do nothing because it's hibernate constructor
+         }
 
     public long getIdCategory() { return idCategory; }
 

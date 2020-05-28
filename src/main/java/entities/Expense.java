@@ -36,7 +36,9 @@ public class Expense {
         return categoryExpense;
     }
 
-    public Expense(){}
+    public Expense(){
+        //Do nothing because it's hibernate constructor
+    }
 
     public Long getIdExpense() { return idExpense; }
 
