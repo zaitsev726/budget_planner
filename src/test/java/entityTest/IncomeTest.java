@@ -16,7 +16,7 @@ public class IncomeTest {
     private Date date;
 
     @Before
-    public void setIncome(){
+    public void setIncome() {
         income = new Income();
         income.setIdIncome((long) 5);
         income.setSum(300);
@@ -25,14 +25,14 @@ public class IncomeTest {
     }
 
     @Test
-    public void testIncomeParameters(){
+    public void testIncomeParameters() {
         assertEquals(5L, (long) income.getIdIncome());
         assertEquals(300.0, income.getSum(), 1e-15);
         assertEquals(income.getDate(), date);
     }
 
     @Test
-    public void stringTest(){
+    public void stringTest() {
         assertEquals(income.toString(), "Income{" +
                 "idIncome=" + income.getIdIncome() +
                 ", sum=" + income.getSum() +
@@ -41,12 +41,12 @@ public class IncomeTest {
     }
 
     @Test
-    public void equalsTest(){
-        assertEquals(income,income);
+    public void equalsTest() {
+        assertEquals(income, income);
         assertNotEquals(null, income);
-        assertNotEquals(income, new Category());
+        assertNotEquals(new Category(), income);
         Category category = null;
-        assertNotEquals(income,category);
+        assertNotEquals(income, category);
 
         Income I = new Income();
         I.setIdIncome((long) 5);
@@ -57,15 +57,15 @@ public class IncomeTest {
         assertEquals(I.hashCode(), income.hashCode());
 
         I.setIdIncome(-1L);
-        assertNotEquals(I,income);
+        assertNotEquals(I, income);
         I.setIdIncome(income.getIdIncome());
 
         I.setSum(0);
-        assertNotEquals(I,income);
+        assertNotEquals(I, income);
         I.setSum(income.getSum());
 
         I.setDate(new Date(1111111L));
-        assertNotEquals(I,income);
+        assertNotEquals(I, income);
 
     }
 }

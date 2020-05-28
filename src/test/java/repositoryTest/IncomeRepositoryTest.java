@@ -66,6 +66,9 @@ public class IncomeRepositoryTest {
     public void searchingIncome() {
         List<Income> incomes = incomeRepository.findByDate(date2);
         assertEquals(9398.72, incomes.get(1).getSum(), 0.01);
+
+        Income income = incomeRepository.findByIdIncome(income1.getIdIncome());
+        assertEquals(income, income1);
     }
 
     @Test
@@ -96,6 +99,7 @@ public class IncomeRepositoryTest {
         }
     }
 
+    @Test
     public void findingByMonthTest() {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
@@ -110,7 +114,15 @@ public class IncomeRepositoryTest {
         assertEquals(incomes.get(0).getDate().getMonth(), (new Date()).getMonth());
     }
 
-
+    @Test
+    public void badSavingTest(){
+        Income income = null;
+        try {
+            income = incomeRepository.updateIncome(income);
+        }catch (NoResultException ignored) {
+            assertNull(income);
+        }
+    }
     @After
     public void deleteExpenses() {
         incomeRepository.deleteIncomeByDate(date2);

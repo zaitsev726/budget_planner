@@ -57,20 +57,14 @@ public class Expense {
     public void setIdExpense(Long idExpense) { this.idExpense = idExpense; }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (!(obj instanceof Expense))
-            return false;
-
-        final Expense expense = (Expense) obj;
-
-        if (expense.getIdExpense() != null && expense.getIdCategory() != null
-                && expense.getSum() != 0   && expense.getDate() != null) {
-            return expense.getIdExpense().equals(this.idExpense) && expense.getIdCategory().equals(this.idCategory) &&
-                    expense.getSum() == this.sum && expense.getDate().equals(date);
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Expense expense = (Expense) o;
+        return Double.compare(expense.sum, sum) == 0 &&
+                Objects.equals(idExpense, expense.idExpense) &&
+                Objects.equals(date.getTime(), expense.date.getTime()) &&
+                Objects.equals(idCategory, expense.idCategory);
     }
 
     @Override

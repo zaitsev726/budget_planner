@@ -39,7 +39,7 @@ public class Income {
         Income income = (Income) o;
         return Double.compare(income.sum, sum) == 0 &&
                 Objects.equals(idIncome, income.idIncome) &&
-                Objects.equals(date, income.date);
+                Objects.equals(date.getTime(), income.date.getTime());
     }
 
     @Override

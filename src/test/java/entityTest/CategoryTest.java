@@ -87,9 +87,9 @@ public class CategoryTest {
     }
 
     @Test
-    public void equalsAndHashCodeTest(){
+    public void equalsAndHashCodeTest() {
         assertNotEquals(null, category);
-        assertNotEquals(category, new Expense());
+        assertNotEquals(new Expense(), category);
         Expense expense = null;
         assertNotEquals(category, expense);
         Category C = new Category();
@@ -98,25 +98,25 @@ public class CategoryTest {
         C.setCategoryName(category.getCategoryName());
         C.setExpenses(category.getExpenses());
 
-        assertEquals(category.getExpenses().size(), C.getExpenses().size());
+        assertEquals(C.getExpenses().size(), category.getExpenses().size());
 
-        assertEquals(category, C);
+        assertEquals(C, category);
         assertEquals(C.hashCode(), category.hashCode());
 
         C.setCategoryName("rAnDomNaMe2");
-        assertNotEquals(category, C);
+        assertNotEquals(C, category);
         C.setCategoryName(category.getCategoryName());
 
         C.setExpenses(new ArrayList<>());
-        assertNotEquals(category, C);
+        assertNotEquals(C, category);
         C.setExpenses(category.getExpenses());
 
         C.setCurrentSum(0);
-        assertNotEquals(category, C);
+        assertNotEquals(C, category);
         C.setCurrentSum(category.getCurrentSum());
 
         C.setIdCategory(-1L);
-        assertNotEquals(category, C);
+        assertNotEquals(C, category);
 
     }
 }
