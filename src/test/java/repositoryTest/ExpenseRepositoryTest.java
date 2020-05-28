@@ -82,7 +82,7 @@ public class ExpenseRepositoryTest {
         expense3 = expenseRepository.updateExpense(expense3);
 
         assertEquals(expense3.getDate(), newDate);
-        assertEquals(expense3.getSum(), 1256.12, 0.01);
+        assertEquals(1256.12, expense3.getSum() , 0.01);
         assertEquals(expense3.getIdCategory(), expense1.getIdCategory());
 
         Expense expense = null;
