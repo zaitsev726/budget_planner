@@ -101,8 +101,8 @@ public class CategoryRepositoryTest {
 
     @Test
     public void findingAllTest() {
-        assertEquals(categories.size(), 4);
-        assertEquals(categories.get(2).getCurrentSum(),200.96, 0.01);
+        assertEquals(4, categories.size());
+        assertEquals(200.96, categories.get(2).getCurrentSum(), 0.01);
     }
 
     @After

@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 public class CategoryTest {
     private Category category;
     private Date date;
+
     @Before
     public void setCategory() {
         category = new Category();
@@ -32,20 +33,20 @@ public class CategoryTest {
     @Test
     public void testCategoryParameters() {
         assertEquals("RandomName", category.getCategoryName());
-        assertEquals(category.getIdCategory(), 2);
+        assertEquals(2, category.getIdCategory());
         assertEquals(100.0, category.getCurrentSum(), 1e-15);
 
-        assertEquals(category.getExpenses().size(), 1);
+        assertEquals(1, category.getExpenses().size());
         Expense expense = category.getExpenses().get(0);
-        assertEquals(expense.getSum(), 1238.233,0.01 );
-        assertEquals(expense.getDate(), date);
-        assertEquals(expense.getIdExpense().longValue(),2);
-        assertEquals(expense.getCategoryExpense(), category);
+        assertEquals(1238.233, expense.getSum(), 0.01);
+        assertEquals(date, expense.getDate());
+        assertEquals(2, expense.getIdExpense().longValue());
+        assertEquals(category, expense.getCategoryExpense());
     }
 
 
     @Test
-    public void addingRepetitiveExpense(){
+    public void addingRepetitiveExpense() {
         Expense expense = new Expense();
         expense.setSum(1238.233);
         date = new Date();
@@ -56,29 +57,29 @@ public class CategoryTest {
         category.addExpense(expense);
         category.addExpense(expense);
 
-        assertEquals(category.getExpenses().size(), 1);
+        assertEquals(1, category.getExpenses().size());
     }
 
     @Test
-    public void removingExpense(){
+    public void removingExpense() {
         Expense expense = category.getExpenses().get(0);
         category.removeExpense(expense);
-        assertEquals(category.getExpenses().size(), 0);
+        assertEquals(0, category.getExpenses().size());
         assertNull(expense.getCategoryExpense());
 
         category.addExpense(expense);
-        assertEquals(category.getExpenses().size(), 1);
+        assertEquals(1, category.getExpenses().size());
         assertNotNull(expense.getCategoryExpense());
 
     }
 
     @Test
-    public void stringTest(){
-        assertEquals(category.toString(), "Category{" +
+    public void stringTest() {
+        assertEquals("Category{" +
                 "idCategory=" + category.getIdCategory() +
                 ", currentSum=" + category.getCurrentSum() +
                 ", categoryName='" + category.getCategoryName() + '\'' +
                 ", expenses=" + category.getExpenses() +
-                '}');
+                '}', category.toString());
     }
 }
