@@ -5,6 +5,7 @@ import entities.Expense;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -58,6 +59,8 @@ public class CategoryTest {
         category.addExpense(expense);
 
         assertEquals(1, category.getExpenses().size());
+        category.addExpense(null);
+        assertEquals(1, category.getExpenses().size());
     }
 
     @Test
@@ -81,5 +84,37 @@ public class CategoryTest {
                 ", categoryName='" + category.getCategoryName() + '\'' +
                 ", expenses=" + category.getExpenses() +
                 '}', category.toString());
+    }
+
+    @Test
+    public void equalsAndHashCodeTest(){
+        assertNotEquals(null, category);
+        assertNotEquals(category, new Expense());
+        Category C = new Category();
+        C.setIdCategory(category.getIdCategory());
+        C.setCurrentSum(category.getCurrentSum());
+        C.setCategoryName(category.getCategoryName());
+        C.setExpenses(category.getExpenses());
+
+        assertEquals(category.getExpenses().size(), C.getExpenses().size());
+
+        assertEquals(category, C);
+        assertEquals(C.hashCode(), category.hashCode());
+
+        C.setCategoryName("rAnDomNaMe2");
+        assertNotEquals(category, C);
+        C.setCategoryName(category.getCategoryName());
+
+        C.setExpenses(new ArrayList<>());
+        assertNotEquals(category, C);
+        C.setExpenses(category.getExpenses());
+
+        C.setCurrentSum(0);
+        assertNotEquals(category, C);
+        C.setCurrentSum(category.getCurrentSum());
+
+        C.setIdCategory(-1L);
+        assertNotEquals(category, C);
+
     }
 }
