@@ -26,11 +26,11 @@ public class CategoryRepository {
         em.getTransaction().commit();
     }
 
-    public void deleteCategory(long id_category) {
+    public void deleteCategory(long idCategory) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         Query query = em.createQuery("delete from Category c where c.idCategory= :id");
-        query.setParameter("id", id_category);
+        query.setParameter("id", idCategory);
         query.executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -62,10 +62,10 @@ public class CategoryRepository {
         return category;
     }
 
-    public Category findByIdCategory(long id_category) {
+    public Category findByIdCategory(long idCategory) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select c from Category c where c.idCategory = :id", Category.class)
-                .setParameter("id", id_category)
+                .setParameter("id", idCategory)
                 .getSingleResult();
     }
 

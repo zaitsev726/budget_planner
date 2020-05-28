@@ -35,11 +35,11 @@ public class ExpenseRepository {
         em.getTransaction().commit();
     }
 
-    public void deleteExpense(long id_expense) {
+    public void deleteExpense(long idExpense) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         Query query = em.createQuery("delete from Expense e where e.idExpense= :id");
-        query.setParameter("id", id_expense);
+        query.setParameter("id", idExpense);
         query.executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -59,17 +59,17 @@ public class ExpenseRepository {
         return expense;
     }
 
-    public List<Expense> findCategoryExpenses(long id_category) {
+    public List<Expense> findCategoryExpenses(long idCategory) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select e from Expense e where e.idCategory = :id", Expense.class)
-                .setParameter("id", id_category)
+                .setParameter("id", idCategory)
                 .getResultList();
     }
 
-    public Expense findByIdExpense(Long id_expense) {
+    public Expense findByIdExpense(Long idExpense) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select e from Expense e where e.idExpense = :id", Expense.class)
-                .setParameter("id", id_expense)
+                .setParameter("id", idExpense)
                 .getSingleResult();
     }
 
@@ -81,12 +81,12 @@ public class ExpenseRepository {
                 .getResultList();
     }
 
-    public List<Expense> findExpensesByMonthAndCategory(Date prevMonth, Date futureMonth, long id_category){
+    public List<Expense> findExpensesByMonthAndCategory(Date prevMonth, Date futureMonth, long idCategory){
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select e from Expense e where e.date > :prev and e.date < :future and e.idCategory = :id_category order by e.idCategory desc ", Expense.class)
                 .setParameter("prev", prevMonth)
                 .setParameter("future", futureMonth)
-                .setParameter("id_category", id_category)
+                .setParameter("id_category", idCategory)
                 .getResultList();
     }
 }

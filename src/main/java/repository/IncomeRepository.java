@@ -26,11 +26,11 @@ public class IncomeRepository {
         em.getTransaction().commit();
     }
 
-    public void deleteIncome(long id_income) {
+    public void deleteIncome(long idIncome) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         Query query = em.createQuery("delete from Income i where i.idIncome= :id");
-        query.setParameter("id", id_income);
+        query.setParameter("id", idIncome);
         query.executeUpdate();
         em.getTransaction().commit();
         em.close();
@@ -61,10 +61,10 @@ public class IncomeRepository {
         return income;
     }
 
-    public Income findByIdIncome(Long id_income) {
+    public Income findByIdIncome(Long idIncome) {
         EntityManager em = emf.createEntityManager();
         return em.createQuery("select i from Income i where i.idIncome = :id", Income.class)
-                .setParameter("id", id_income)
+                .setParameter("id", idIncome)
                 .getSingleResult();
     }
 
