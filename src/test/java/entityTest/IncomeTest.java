@@ -1,5 +1,6 @@
 package entityTest;
 
+import entities.Category;
 import entities.Income;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class IncomeTest {
 
@@ -30,21 +32,40 @@ public class IncomeTest {
     }
 
     @Test
-    public void equalsTest(){
-        Income income = new Income();
-        income.setIdIncome((long) 5);
-        income.setSum(300);
-        income.setDate(date);
-
-        assertEquals(this.income, income);
-
-    }
-    @Test
     public void stringTest(){
         assertEquals(income.toString(), "Income{" +
                 "idIncome=" + income.getIdIncome() +
                 ", sum=" + income.getSum() +
                 ", date=" + income.getDate() +
                 '}');
+    }
+
+    @Test
+    public void equalsTest(){
+        assertEquals(income,income);
+        assertNotEquals(null, income);
+        assertNotEquals(income, new Category());
+        Category category = null;
+        assertNotEquals(income,category);
+
+        Income I = new Income();
+        I.setIdIncome((long) 5);
+        I.setSum(300);
+        I.setDate(date);
+
+        assertEquals(income, I);
+        assertEquals(I.hashCode(), income.hashCode());
+
+        I.setIdIncome(-1L);
+        assertNotEquals(I,income);
+        I.setIdIncome(income.getIdIncome());
+
+        I.setSum(0);
+        assertNotEquals(I,income);
+        I.setSum(income.getSum());
+
+        I.setDate(new Date(1111111L));
+        assertNotEquals(I,income);
+
     }
 }

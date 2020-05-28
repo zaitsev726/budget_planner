@@ -90,6 +90,8 @@ public class CategoryTest {
     public void equalsAndHashCodeTest(){
         assertNotEquals(null, category);
         assertNotEquals(category, new Expense());
+        Expense expense = null;
+        assertNotEquals(category, expense);
         Category C = new Category();
         C.setIdCategory(category.getIdCategory());
         C.setCurrentSum(category.getCurrentSum());
