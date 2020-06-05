@@ -2,10 +2,10 @@ package repositoryTest;
 
 import entities.Category;
 import entities.Expense;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import repository.CategoryRepository;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import repository.ExpenseRepository;
 
 import javax.persistence.NoResultException;
@@ -13,8 +13,12 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ExpenseRepositoryTest {
+    @Mock
     private ExpenseRepository expenseRepository;
     private Expense expense1;
     private Expense expense2;
@@ -24,17 +28,16 @@ public class ExpenseRepositoryTest {
 
     @Before
     public void createExpenses() {
-        expenseRepository = new ExpenseRepository();
+        expenseRepository = Mockito.mock(ExpenseRepository.class);
+        expenseList = new ArrayList<>();
 
         Category category = new Category();
-        CategoryRepository categoryRepository = new CategoryRepository();
-
         category.setCategoryName("Категория1");
         category.setCurrentSum(386.26);
-        categoryRepository.saveCategory(category);
-        category = categoryRepository.findByNameCategory("Категория1");
+        category.setIdCategory(1L);
 
         expense1 = new Expense();
+        expense1.setIdExpense(1L);
         expense1.setIdCategory(category.getIdCategory());
         expense1.setCategoryExpense(category);
         expense1.setSum(100);
@@ -42,30 +45,39 @@ public class ExpenseRepositoryTest {
         expense1.setDate(date);
 
         expense2 = new Expense();
+        expense2.setIdExpense(2L);
         expense2.setIdCategory(category.getIdCategory());
         expense2.setSum(1032.23);
         expense2.setCategoryExpense(category);
         expense2.setDate(date);
 
         expense3 = new Expense();
+        expense3.setIdExpense(3L);
         expense3.setIdCategory(category.getIdCategory());
         expense3.setSum(0.93);
         expense3.setCategoryExpense(category);
         expense3.setDate(date);
 
         expense4 = new Expense();
+        expense4.setIdExpense(4L);
         expense4.setIdCategory(category.getIdCategory());
         expense4.setSum(32.78);
         expense4.setCategoryExpense(category);
         expense4.setDate(date);
 
 
-        expenseRepository.saveExpense(expense1);
-        expenseRepository.saveExpense(expense2);
-        expenseRepository.saveExpense(expense3);
-        expenseRepository.saveExpense(expense4);
+        expenseList.add(expense1);
+        expenseList.add(expense2);
+        expenseList.add(expense3);
+        expenseList.add(expense4);
 
-        expenseList = (ArrayList<Expense>) expenseRepository.findCategoryExpenses(expense1.getIdCategory());
+        when(expenseRepository.updateExpense(argThat(Objects::isNull))).thenThrow(new IllegalArgumentException());
+        when(expenseRepository.findByIdExpense(1L)).thenReturn(expense1);
+        when(expenseRepository.findByIdExpense(3L)).thenThrow(new NoResultException());
+        when(expenseRepository.findByIdExpense(-1L)).thenThrow(new NoResultException());
+        when(expenseRepository.findExpensesByMonth(anyObject(), anyObject())).thenReturn(expenseList);
+        when(expenseRepository.findExpensesByMonthAndCategory(anyObject(),anyObject(),anyLong())).thenReturn(expenseList);
+
     }
 
     @Test
@@ -79,15 +91,16 @@ public class ExpenseRepositoryTest {
         Date newDate = new Date();
         expense3.setDate(newDate);
         expense3.setSum(1256.12);
-        expense3 = expenseRepository.updateExpense(expense3);
+        expenseRepository.updateExpense(expense3);
 
-        assertEquals(expense3.getDate(), newDate);
-        assertEquals(1256.12, expense3.getSum() , 0.01);
-        assertEquals(expense3.getIdCategory(), expense1.getIdCategory());
+        verify(expenseRepository).updateExpense(expense3);
 
         Expense expense = null;
-        expense = expenseRepository.updateExpense(expense);
-        assertNull(expense);
+        try {
+            expense = expenseRepository.updateExpense(expense);
+        }catch (IllegalArgumentException e) {
+            assertNull(expense);
+        }
     }
 
     @Test
@@ -100,6 +113,9 @@ public class ExpenseRepositoryTest {
     public void deletingTest() {
         long id = expense3.getIdExpense();
         expenseRepository.deleteExpense(expense3.getIdExpense());
+        expenseList.remove(expense3);
+        verify(expenseRepository).deleteExpense(3L);
+
         Expense expense = null;
         try {
             expense = expenseRepository.findByIdExpense(id);
@@ -113,6 +129,7 @@ public class ExpenseRepositoryTest {
         Expense expense = new Expense();
         expense.setIdExpense((long) -1);
         expenseRepository.saveExpense(expense);
+        verify(expenseRepository).saveExpense(expense);
 
         expense = null;
         try {
@@ -143,15 +160,4 @@ public class ExpenseRepositoryTest {
         }
 
     }
-
-    @After
-    public void deleteExpenses() {
-        CategoryRepository categoryRepository = new CategoryRepository();
-        expenseRepository.deleteExpense(expense1.getIdExpense());
-        expenseRepository.deleteExpense(expense2.getIdExpense());
-        expenseRepository.deleteExpense(expense3.getIdExpense());
-        expenseRepository.deleteExpense(expense4.getIdExpense());
-        categoryRepository.deleteCategory("Категория1");
-    }
-
 }
